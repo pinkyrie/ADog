@@ -6,13 +6,71 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>771</width>
+    <height>402</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Widget</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">QPushButton {
+    border: 2px solid #5A5A5A;
+    border-radius: 15px; /* 圆角半径 */
+    background-color: qlineargradient(
+        spread:pad, x1:0, y1:0, x2:1, y2:1, 
+        stop:0 #4CAF50, stop:1 #81C784
+    );
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    min-width: 100px;
+    min-height: 40px;
+    /* 模拟阴影效果 */
+    margin: 5px 5px;
+    outline: none; /* 移除虚线框 */
+}
+
+QPushButton:hover {
+    background-color: qlineargradient(
+        spread:pad, x1:0, y1:0, x2:1, y2:1, 
+        stop:0 #66BB6A, stop:1 #A5D6A7
+    );
+}
+
+QPushButton:pressed {
+    background-color: qlineargradient(
+        spread:pad, x1:0, y1:0, x2:1, y2:1, 
+        stop:0 #388E3C, stop:1 #66BB6A
+    );
+    border: 2px solid #388E3C;
+    margin: 7px 7px; /* 按下时的边距变化 */
+}
+
+QPushButton:disabled {
+    background-color: #BDBDBD;
+    border: 2px solid #9E9E9E;
+    color: #757575;
+}
+</string>
+  </property>
+  <widget class="QPushButton" name="btn_test">
+   <property name="geometry">
+    <rect>
+     <x>310</x>
+     <y>160</y>
+     <width>154</width>
+     <height>74</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
+   <property name="text">
+    <string>PushButton</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>

@@ -21,4 +21,8 @@ FORMS += \
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
+
+LIBS += -lpsapi -luser32
+
+
 !isEmpty(target.path): INSTALLS += target

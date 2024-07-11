@@ -2,6 +2,8 @@
 #define WIDGET_H
 
 #include <QWidget>
+#include <QTimer>
+#include <QDateTime>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -19,5 +21,12 @@ public:
 
 private:
     Ui::Widget *ui;
+    QTimer * SnapTimer;
+    QDateTime StartTime;
+    std::vector<QString> AppList = {"qtcreator.exe"};
+    void RecordTabApps();
+    void SavaUsageApps();
+    void RecordTime();
+    QString GetWindowTitle(HWND hwnd);
 };
 #endif // WIDGET_H

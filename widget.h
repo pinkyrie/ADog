@@ -24,9 +24,14 @@ private:
     QTimer * SnapTimer;
     QDateTime StartTime;
     std::vector<QString> AppList = {"qtcreator.exe"};
-    void RecordTabApps();
+    std::map<QString, int> AppUsageDict= {{"qtcreator.exe", 3600},
+                                        {"ADog.exe", 2400}};
+    QString RecordingWindow = nullptr;
+    int Interval = 1000;
+    void LoadAppDict();
+    void GetTabApps();
     void SavaUsageApps();
-    void RecordTime();
+    void RecordTime(QDateTime StartTime);
     QString GetWindowTitle(HWND hwnd);
 };
 #endif // WIDGET_H

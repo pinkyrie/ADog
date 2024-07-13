@@ -29,7 +29,10 @@ private:
     QString RecordingWindow = nullptr;
     int Interval = 1000;
     void LoadAppDict();
-    void GetTabApps();
+    QString GetCurrentApp();
+    QString getFileDescription(const QString& path);
+    QString getProcessExePath(HWND hwnd);
+    QString getProcessDescription(HWND hwnd);
     void SavaUsageApps();
     void RecordTime(QDateTime StartTime);
     QString GetWindowTitle(HWND hwnd);

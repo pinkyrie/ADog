@@ -8,6 +8,10 @@
 #include <Psapi.h>
 #include <libloaderapi.h>
 #include <QFile>
+#include <QFileInfo>
+#include <QDir>
+#include <system_error>
+#include <shobjidl.h>
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent),ui(new Ui::Widget),
@@ -32,14 +36,9 @@ void Widget::LoadAppDict()
     // QFile loadFile(saveFormat == JsonQFile loadFile(saveFormat == Json)
 }
 
-void Widget:: GetTabApps(){
-    HWND hwnd = GetWindow(GetDesktopWindow(), GW_CHILD);
-    while (hwnd) {
-        if (IsWindowVisible(hwnd) && GetWindowTextLength(hwnd) > 0) {
-
-        }
-        hwnd = GetWindow(hwnd, GW_HWNDNEXT);
-    }
+QString Widget:: GetCurrentApp(){
+    HWND hwnd = GetForegroundWindow();
+    return GetWindowTitle(hwnd);
 
 
 }
@@ -52,8 +51,10 @@ void Widget::SavaUsageApps()
 void Widget::RecordTime(QDateTime StartTime)
 {
     QDateTime EndTime = StartTime;
+
     HWND hwnd = GetForegroundWindow();
-    QString CurrentWindow = GetWindowTitle(hwnd);
+    QString CurrentWindow = getProcessDescription(hwnd);
+    qDebug() << "window name is:" << CurrentWindow;
     auto iter = AppUsageDict.find(CurrentWindow);
     if (iter != AppUsageDict.end()) {
         if (RecordingWindow == nullptr) {
@@ -91,7 +92,65 @@ QString Widget:: GetWindowTitle(HWND hwnd) {
     return processNameStr;
 }
 
+// quote from Mrbean C huge thanks to mrbeanC :)
+QString Widget::getFileDescription(const QString& path)
+{
+    CoInitialize(nullptr); // 初始化 COM 库
 
+    std::wstring wStr = path.toStdWString();
+    LPCWSTR pPath = wStr.c_str();
+
+    // 使用 CComPtr 自动释放 IShellItem2 接口
+    CComPtr<IShellItem2> pItem;
+    HRESULT hr = SHCreateItemFromParsingName(pPath, nullptr, IID_PPV_ARGS(&pItem));
+    if (FAILED(hr))
+        throw std::system_error(hr, std::system_category(), "SHCreateItemFromParsingName() failed");
+
+
+    QString desc { QFileInfo(path).fileName() }; // default | fallback
+
+    // 使用 CComHeapPtr 自动释放字符串（调用 CoTaskMemFree）
+    CComHeapPtr<WCHAR> pValue;
+    hr = pItem->GetString(PKEY_FileDescription, &pValue);
+    if (SUCCEEDED(hr))
+        desc = QString::fromWCharArray(pValue);
+    else
+        qDebug() << "No description there. Fallback to exe filename:" << desc;
+
+    CoUninitialize(); // 取消初始化 COM 库
+    return desc;
+}
+
+// quote from Mrbean C huge thanks to mrbeanC :)
+QString Widget::getProcessExePath(HWND hwnd)
+{
+    DWORD processId = 0;
+    GetWindowThreadProcessId(hwnd, &processId);
+
+    if (processId == 0)
+        return "";
+
+    HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, processId);
+    if (hProcess == NULL)
+        return "";
+
+    TCHAR processName[MAX_PATH] = TEXT("<unknown>");
+    // https://www.cnblogs.com/mooooonlight/p/14491399.html
+    if (GetModuleFileNameEx(hProcess, NULL, processName, MAX_PATH)) {
+        CloseHandle(hProcess);
+        return QString::fromWCharArray(processName);
+    }
+
+    CloseHandle(hProcess);
+    return "";
+}
+
+// quote from Mrbean C huge thanks to mrbeanC :)
+QString Widget::getProcessDescription(HWND hwnd)
+{
+    QString exePath = getProcessExePath(hwnd);
+    return getFileDescription(exePath);
+}
 
 Widget::~Widget()
 {

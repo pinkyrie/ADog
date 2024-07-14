@@ -12,6 +12,12 @@
 #include <QDir>
 #include <system_error>
 #include <shobjidl.h>
+#include <propkey.h>
+#include <comdef.h>
+#include <atlbase.h>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent),ui(new Ui::Widget),
@@ -25,6 +31,7 @@ Widget::Widget(QWidget *parent)
         qDebug() << "clicked" << QTime::currentTime() << "\n";
     });
     SnapTimer->setInterval(Interval);
+    LoadAppDict();
     connect(SnapTimer, &QTimer::timeout, this, [=](){
         RecordTime(StartTime);
                                                });
@@ -33,7 +40,60 @@ Widget::Widget(QWidget *parent)
 }
 void Widget::LoadAppDict()
 {
-    // QFile loadFile(saveFormat == JsonQFile loadFile(saveFormat == Json)
+    QFile file("./usage_data.json");
+    qDebug() << QCoreApplication::applicationDirPath();
+    QDir appDir(QCoreApplication::applicationDirPath());
+
+    // 导航到项目根目录
+    appDir.cdUp(); // 进入 build 目录
+    appDir.cdUp(); // 进入 ADog 目录
+
+    // 构建相对路径
+    QString relativeFilePath = appDir.absoluteFilePath("D:/soft/Qt/projects/ADog/test.json");
+    qDebug() << relativeFilePath;
+    qDebug() << file.exists();
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)){
+        qDebug() << "read error";
+        return;
+    }
+    // QByteArray fileData = file.readAll();
+    QJsonParseError parseError;
+    QJsonDocument jsonDoc = QJsonDocument::fromJson(file.readAll(), &parseError);
+    if (parseError.error != QJsonParseError::NoError) {
+        qDebug() << "JSON parse error:" << parseError.errorString();
+        return;
+    }
+    QJsonObject jsonObj = jsonDoc.object();
+    QMap<QString, int> map;
+
+    for (auto it = jsonObj.begin(); it != jsonObj.end(); ++it) {
+        qDebug() << "Key:" << it.key() << "Value:" << it.value();
+
+        // 输出值的类型
+        if (it.value().isDouble()) {
+            qDebug() << "Type: Double";
+            map.insert(it.key(), it.value().toInt());
+        } else if (it.value().isString()) {
+            qDebug() << "Type: String";
+            bool ok;
+            int intValue = it.value().toString().toInt(&ok);
+            if (ok) {
+                map.insert(it.key(), intValue);
+            } else {
+                qWarning() << "Invalid integer value in string for key" << it.key();
+            }
+        } else if (it.value().isBool()) {
+            qDebug() << "Type: Bool";
+            map.insert(it.key(), it.value().toBool() ? 1 : 0);
+        } else if (it.value().isNull()) {
+            qDebug() << "Type: Null";
+            qWarning() << "Null value for key" << it.key();
+        } else {
+            qWarning() << "Invalid value type for key" << it.key();
+        }
+    }
+
+
 }
 
 QString Widget:: GetCurrentApp(){

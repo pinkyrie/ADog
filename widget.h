@@ -29,6 +29,11 @@ private:
     QString RecordingWindow = nullptr;
     int Interval = 1000;
     void LoadAppDict();
+    void InitAppDict();
+    bool AddApp(const QString& appName);
+    bool UpdateAppUsage(const QString& appName);
+    bool DeleteApp(const QString& appName);
+    bool GetAppUsageTime(const QString& appName);
     QString GetCurrentApp();
     QString getFileDescription(const QString& path);
     QString getProcessExePath(HWND hwnd);

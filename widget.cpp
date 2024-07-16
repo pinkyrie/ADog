@@ -18,6 +18,9 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QSqlDatabase>
+#include <QSqlError>
+#include <QSqlQuery>
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent),ui(new Ui::Widget),
@@ -27,11 +30,15 @@ Widget::Widget(QWidget *parent)
     ui->setupUi(this);
 
     setWindowTitle("ADog - Your App Usage Watch Dog");
+    InitAppDict();
+    GetAppUsageTime("qtcreator");
     connect(ui->btn_test, &QPushButton::clicked, this, [=]() {
         qDebug() << "clicked" << QTime::currentTime() << "\n";
     });
     SnapTimer->setInterval(Interval);
+
     LoadAppDict();
+
     connect(SnapTimer, &QTimer::timeout, this, [=](){
         RecordTime(StartTime);
                                                });
@@ -40,20 +47,12 @@ Widget::Widget(QWidget *parent)
 }
 void Widget::LoadAppDict()
 {
-    QFile file("./usage_data.json");
-    qDebug() << QCoreApplication::applicationDirPath();
-    QDir appDir(QCoreApplication::applicationDirPath());
-
-    // 导航到项目根目录
-    appDir.cdUp(); // 进入 build 目录
-    appDir.cdUp(); // 进入 ADog 目录
-
-    // 构建相对路径
-    QString relativeFilePath = appDir.absoluteFilePath("D:/soft/Qt/projects/ADog/test.json");
-    qDebug() << relativeFilePath;
-    qDebug() << file.exists();
+    // 需要把ini文件放到和可执行文件exe同级下
+    QString filePath = QCoreApplication::applicationDirPath() + "/usage_data.json";
+    QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)){
         qDebug() << "read error";
+        qDebug() << file.exists();
         return;
     }
     // QByteArray fileData = file.readAll();
@@ -68,32 +67,52 @@ void Widget::LoadAppDict()
 
     for (auto it = jsonObj.begin(); it != jsonObj.end(); ++it) {
         qDebug() << "Key:" << it.key() << "Value:" << it.value();
-
-        // 输出值的类型
-        if (it.value().isDouble()) {
-            qDebug() << "Type: Double";
-            map.insert(it.key(), it.value().toInt());
-        } else if (it.value().isString()) {
-            qDebug() << "Type: String";
-            bool ok;
-            int intValue = it.value().toString().toInt(&ok);
-            if (ok) {
-                map.insert(it.key(), intValue);
-            } else {
-                qWarning() << "Invalid integer value in string for key" << it.key();
-            }
-        } else if (it.value().isBool()) {
-            qDebug() << "Type: Bool";
-            map.insert(it.key(), it.value().toBool() ? 1 : 0);
-        } else if (it.value().isNull()) {
-            qDebug() << "Type: Null";
-            qWarning() << "Null value for key" << it.key();
-        } else {
-            qWarning() << "Invalid value type for key" << it.key();
-        }
+        qDebug() << it.value().toString();
+        qDebug() << it.value().toString().toInt();
     }
 
 
+}
+
+void Widget::InitAppDict()
+{
+    QSqlDatabase database = QSqlDatabase::addDatabase("QSQLITE");
+    database.setDatabaseName("D:/soft/Qt/projects/ADog/ADog.db");
+    if (!database.open())
+    {
+        qDebug() << "Error: connection with database failed";
+    }
+    else
+    {
+        qDebug() << "Database: connection ok";
+    }
+
+}
+
+bool Widget::AddApp(const QString &appName)
+{
+     QSqlQuery query;
+    return true;
+}
+
+bool Widget::UpdateAppUsage(const QString &appName)
+{
+    return true;
+}
+
+bool Widget::DeleteApp(const QString &appName)
+{
+    return true;
+}
+
+bool Widget::GetAppUsageTime(const QString &appName)
+{
+    QSqlQuery query("SELECT * FROM AppUsage");
+    while (query.next()) {
+        QString appName = query.value(1).toString();
+        qDebug() << appName;
+    }
+    return appName != nullptr;
 }
 
 QString Widget:: GetCurrentApp(){

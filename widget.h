@@ -1,6 +1,7 @@
 #ifndef WIDGET_H
 #define WIDGET_H
 
+#include "dbmanager.h"
 #include <QWidget>
 #include <QTimer>
 #include <QDateTime>
@@ -23,9 +24,12 @@ private:
     Ui::Widget *ui;
     QTimer * SnapTimer;
     QDateTime StartTime;
+    DBManager DBmanager;
     std::vector<QString> AppList = {"qtcreator.exe"};
     std::map<QString, int> AppUsageDict= {{"qtcreator.exe", 3600},
-                                        {"ADog.exe", 2400}};
+                                   {"ADog.exe", 2400}};
+    QMap<QString, QString> resByAppName;
+    QMap<QString, QString> resByDate;
     QString RecordingWindow = nullptr;
     int Interval = 1000;
     void LoadAppDict();

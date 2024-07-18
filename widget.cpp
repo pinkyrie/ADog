@@ -25,11 +25,12 @@
 Widget::Widget(QWidget *parent)
     : QWidget(parent),ui(new Ui::Widget),
     SnapTimer(new QTimer(this)),
-    StartTime(QDateTime::currentDateTime())
+    StartTime(QDateTime::currentDateTime()),
+    DBmanager()
 {
     ui->setupUi(this);
-
     setWindowTitle("ADog - Your App Usage Watch Dog");
+
     InitAppDict();
     GetAppUsageTime("qtcreator");
     connect(ui->btn_test, &QPushButton::clicked, this, [=]() {
@@ -76,16 +77,11 @@ void Widget::LoadAppDict()
 
 void Widget::InitAppDict()
 {
-    QSqlDatabase database = QSqlDatabase::addDatabase("QSQLITE");
-    database.setDatabaseName("D:/soft/Qt/projects/ADog/ADog.db");
-    if (!database.open())
-    {
-        qDebug() << "Error: connection with database failed";
+    DBmanager.readByAppName("qtcreator", resByAppName);
+    for (auto it = resByAppName.begin(); it != resByAppName.end(); ++it) {
+        qDebug() << "Key:" << it.key() << "Value:" << it.value();
     }
-    else
-    {
-        qDebug() << "Database: connection ok";
-    }
+
 
 }
 

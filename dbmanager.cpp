@@ -51,10 +51,39 @@ bool DBManager::updateItem(const QString &appName, const QString &date, const QS
 
 void DBManager::readByDate(const QString &date, QMap<QString, QString> &res)
 {
+    QSqlQuery query;
+    query.prepare("SELECT app_name, usage_date "
+                  "FROM AppUsage WHERE usage_date = :date");
+    query.bindValue(":date", date);
+    if (!query.exec()) {
+        qDebug() << "Query execution error: " << query.lastError().text();
+        return;
+    }
 
+    // 读取查询结果并存储到res中
+    while (query.next()) {
+        QString appName = query.value(0).toString();
+        QString time = query.value(1).toString();
+        res.insert(appName, time);
+    }
 }
 
 void DBManager::readByAppName(const QString &appName, QMap<QString, QString> &res)
 {
+    QSqlQuery query;
+    query.prepare("SELECT usage_date, usage_time "
+                  "FROM AppUsage WHERE app_name = :appName");
+    query.bindValue(":appName", appName);
+    if (!query.exec()) {
+        qDebug() << "Query execution error: " << query.lastError().text();
+        return;
+    }
+
+    // 读取查询结果并存储到res中
+    while (query.next()) {
+        QString usage_date = query.value(0).toString();
+        QString usage_time = query.value(1).toString();
+        res.insert(usage_date, usage_time);
+    }
 
 }

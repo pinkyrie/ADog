@@ -1,4 +1,6 @@
 #include "widget.h"
+#include "qbarcategoryaxis.h"
+#include "qvalueaxis.h"
 #include "ui_widget.h"
 #include <QPushButton>
 #include <QDebug>
@@ -21,6 +23,13 @@
 #include <QSqlDatabase>
 #include <QSqlError>
 #include <QSqlQuery>
+#include <QtCharts/QChartView>
+#include <QtCharts/QBarSeries>
+#include <QtCharts/QBarSet>
+#include <QtCharts/QLegend>
+#include <QHorizontalBarSeries>
+
+QT_CHARTS_USE_NAMESPACE
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent),ui(new Ui::Widget),
@@ -32,6 +41,7 @@ Widget::Widget(QWidget *parent)
     setWindowTitle("ADog - Your App Usage Watch Dog");
 
     InitAppDict();
+    AddApp("app");
     GetAppUsageTime("qtcreator");
     connect(ui->btn_test, &QPushButton::clicked, this, [=]() {
         qDebug() << "clicked" << QTime::currentTime() << "\n";
@@ -66,28 +76,77 @@ void Widget::LoadAppDict()
     QJsonObject jsonObj = jsonDoc.object();
     QMap<QString, int> map;
 
-    for (auto it = jsonObj.begin(); it != jsonObj.end(); ++it) {
-        qDebug() << "Key:" << it.key() << "Value:" << it.value();
-        qDebug() << it.value().toString();
-        qDebug() << it.value().toString().toInt();
-    }
+    // for (auto it = jsonObj.begin(); it != jsonObj.end(); ++it) {
+    //     qDebug() << "Key:" << it.key() << "Value:" << it.value();
+    //     qDebug() << it.value().toString();
+    //     qDebug() << it.value().toString().toInt();
+    // }
 
 
 }
 
 void Widget::InitAppDict()
 {
+    // 获取今日日期
+    // 格式化日期
+    QString today = QDate::currentDate().toString("yyyy-MM-dd");
+    qDebug() << "today is:" << today;
+    QString date = "2024-07-16";
     DBmanager.readByAppName("qtcreator", resByAppName);
     for (auto it = resByAppName.begin(); it != resByAppName.end(); ++it) {
         qDebug() << "Key:" << it.key() << "Value:" << it.value();
     }
-
+    qDebug() << "date";
+    DBmanager.readByDate(date, resByDate);
+    for (auto it = resByDate.begin(); it != resByDate.end(); ++it) {
+        qDebug() << "Key:" << it.key() << "Value:" << it.value();
+    }
 
 }
 
 bool Widget::AddApp(const QString &appName)
 {
-     QSqlQuery query;
+    auto set0 = new QBarSet("Jane");
+    auto set1 = new QBarSet("John");
+    auto set2 = new QBarSet("Axel");
+    auto set3 = new QBarSet("Mary");
+    auto set4 = new QBarSet("Sam");
+
+    *set0 << 1 << 2 << 3 << 4 << 5 << 6;
+    *set1 << 5 << 0 << 0 << 4 << 0 << 7;
+    *set2 << 3 << 5 << 8 << 13 << 8 << 5;
+    *set3 << 5 << 6 << 7 << 3 << 4 << 5;
+    *set4 << 9 << 7 << 5 << 3 << 1 << 2;
+
+    auto barseries = new QHorizontalBarSeries;
+    barseries->append(set0);
+    barseries->append(set1);
+    barseries->append(set2);
+    barseries->append(set3);
+    barseries->append(set4);
+
+    auto chart = new QChart;
+    chart->addSeries(barseries);
+
+    QStringList categories;
+    categories << "Jan" << "Feb" << "Mar" << "Apr" << "May" << "Jun";
+    auto axisX = new QBarCategoryAxis;
+    axisX->append(categories);
+    chart->addAxis(axisX, Qt::AlignLeft);
+    barseries->attachAxis(axisX);
+    axisX->setRange(QString("Jan"), QString("Jun"));
+
+    auto axisY = new QValueAxis;
+    chart->addAxis(axisY, Qt::AlignBottom);
+    barseries->attachAxis(axisY);
+    axisY->setRange(0, 20);
+
+    chart->legend()->setVisible(true);
+    chart->legend()->setAlignment(Qt::AlignLeft);
+
+    chartView = new QChartView(chart);
+    chartView->setRenderHint(QPainter::Antialiasing);
+
     return true;
 }
 

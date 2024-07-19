@@ -5,6 +5,7 @@
 #include <QWidget>
 #include <QTimer>
 #include <QDateTime>
+#include <QtCharts/QChartView>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -18,6 +19,7 @@ class Widget : public QWidget
 
 public:
     Widget(QWidget *parent = nullptr);
+    QtCharts::QChartView *chartView;
     ~Widget();
 
 private:

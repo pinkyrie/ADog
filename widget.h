@@ -2,6 +2,7 @@
 #define WIDGET_H
 
 #include "dbmanager.h"
+#include "iconlabel.h"
 #include <QWidget>
 #include <QTimer>
 #include <QDateTime>
@@ -22,11 +23,14 @@ public:
     QtCharts::QChartView *chartView;
     ~Widget();
 
+private slots:
+    void onIconClicked(int index);
 private:
     Ui::Widget *ui;
     QTimer * SnapTimer;
     QDateTime StartTime;
     DBManager DBmanager;
+    QVector<IconLabel *> iconLabels;
     std::vector<QString> AppList = {"qtcreator.exe"};
     std::map<QString, int> AppUsageDict= {{"qtcreator.exe", 3600},
                                    {"ADog.exe", 2400}};
@@ -44,6 +48,8 @@ private:
     QString getFileDescription(const QString& path);
     QString getProcessExePath(HWND hwnd);
     QString getProcessDescription(HWND hwnd);
+    QPixmap GetApplicationIcon(const QString &exePath);
+    bool SaveAppIcon();
     void SavaUsageApps();
     void RecordTime(QDateTime StartTime);
     QString GetWindowTitle(HWND hwnd);

@@ -1,6 +1,7 @@
 QT       += core gui
 QT       += sql
 QT       += charts
+QT       += winextras
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++17
@@ -11,11 +12,13 @@ CONFIG += c++17
 
 SOURCES += \
     dbmanager.cpp \
+    iconlabel.cpp \
     main.cpp \
     widget.cpp
 
 HEADERS += \
     dbmanager.h \
+    iconlabel.h \
     widget.h
 
 FORMS += \

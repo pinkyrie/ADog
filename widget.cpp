@@ -1,5 +1,7 @@
 #include "widget.h"
+#include "iconlabel.h"
 #include "qbarcategoryaxis.h"
+#include "qboxlayout.h"
 #include "qvalueaxis.h"
 #include "ui_widget.h"
 #include <QPushButton>
@@ -17,6 +19,7 @@
 #include <propkey.h>
 #include <comdef.h>
 #include <atlbase.h>
+#include <QtWinExtras>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
@@ -49,6 +52,7 @@ Widget::Widget(QWidget *parent)
     SnapTimer->setInterval(Interval);
 
     LoadAppDict();
+    SaveAppIcon();
 
     connect(SnapTimer, &QTimer::timeout, this, [=](){
         RecordTime(StartTime);
@@ -125,11 +129,44 @@ bool Widget::AddApp(const QString &appName)
     barseries->append(set3);
     barseries->append(set4);
 
+    QString appName1 = "Qt Creator";
+    QString dir = QCoreApplication::applicationDirPath();
+    QString path1 = dir + "/png/" + appName1 + ".png";
+    QString path2 = path1;
+    QString path3 = path1;
+
+    QVBoxLayout *mainLayout = new QVBoxLayout(this);
+    QVBoxLayout *iconsLayout = new QVBoxLayout;
+    iconsLayout->setSpacing(10);  // 设置图标之间的间距
+
     auto chart = new QChart;
     chart->addSeries(barseries);
 
     QStringList categories;
     categories << "Jan" << "Feb" << "Mar" << "Apr" << "May" << "Jun";
+
+    QStringList iconSets = {path1, path2, path3, path3, path3, path3};
+    for (int i = 0; i < iconSets.count(); i++){
+        QPixmap iconPixmap(iconSets[i]);
+        IconLabel * iconLabel = new IconLabel(iconPixmap, i, this);
+        connect(iconLabel, &IconLabel::clicked, this, &Widget::onIconClicked);
+        iconLabels.append(iconLabel);
+        iconsLayout->addWidget(iconLabel);
+    }
+
+    auto chartView = new QChartView(chart);
+    chartView->setRenderHint(QPainter::Antialiasing);
+
+    QVBoxLayout *chartLayout = new QVBoxLayout;
+    chartLayout->addWidget(chartView);
+
+    QHBoxLayout *combinedLayout = new QHBoxLayout;
+    combinedLayout->addLayout(iconsLayout);
+    combinedLayout->addLayout(chartLayout);
+
+    mainLayout->addLayout(combinedLayout);
+    setLayout(mainLayout);
+
     auto axisX = new QBarCategoryAxis;
     axisX->append(categories);
     chart->addAxis(axisX, Qt::AlignLeft);
@@ -143,9 +180,6 @@ bool Widget::AddApp(const QString &appName)
 
     chart->legend()->setVisible(true);
     chart->legend()->setAlignment(Qt::AlignLeft);
-
-    chartView = new QChartView(chart);
-    chartView->setRenderHint(QPainter::Antialiasing);
 
     return true;
 }
@@ -286,9 +320,67 @@ QString Widget::getProcessDescription(HWND hwnd)
     return getFileDescription(exePath);
 }
 
+QPixmap Widget::GetApplicationIcon(const QString &exePath)
+{
+    std::wstring exePathW = exePath.toStdWString();
+    LPCWSTR exePathLPCWSTR = exePathW.c_str();
+
+    // Get the icon from the executable
+    HICON hIcon = ExtractIconW(NULL, exePathLPCWSTR, 0);
+
+    if (hIcon == NULL || hIcon == (HICON)1) {
+        qDebug() << "无法提取图标";
+        return QPixmap();
+    }
+
+    // Convert HICON to QPixmap
+    QPixmap pixmap = QtWin::fromHICON(hIcon);
+
+    // Destroy the icon to free resources
+    DestroyIcon(hIcon);
+
+    return pixmap;
+}
+
+bool Widget::SaveAppIcon()
+{
+    HWND hwnd = GetForegroundWindow();//TODO:hwnd做参数
+    QString exePath = getProcessExePath(hwnd);
+    QPixmap iconPixmap = GetApplicationIcon(exePath);
+    QString appName = getProcessDescription(hwnd);
+    QString appDir = QCoreApplication::applicationDirPath();
+    QDir dir(appDir);
+    if (!dir.exists("png")) {
+        if (!dir.mkdir("png")) {
+            qDebug() << "无法创建 png 文件夹";
+            return -1;
+        }
+    }
+    if (!iconPixmap.isNull()) {
+        // 保存 QPixmap 为 PNG 文件
+        QString filePath = appDir + "/png/" + appName + ".png";
+        if (iconPixmap.save(filePath, "PNG")) {
+            qDebug() << "图标已保存为:" << filePath;
+            return true;
+        } else {
+            qDebug() << "无法保存图标为 PNG 文件";
+        }
+    } else {
+        qDebug() << "无法提取图标";
+    }
+    return false;
+
+
+}
+
 Widget::~Widget()
 {
     delete ui;
+}
+
+void Widget::onIconClicked(int index)
+{
+    qDebug() << "label: " << index << "is clicked";
 }
 
 

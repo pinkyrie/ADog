@@ -116,11 +116,11 @@ bool Widget::AddApp(const QString &appName)
     auto set3 = new QBarSet("Mary");
     auto set4 = new QBarSet("Sam");
 
-    *set0 << 1 << 2 << 3 << 4 << 5 << 6;
-    *set1 << 5 << 0 << 0 << 4 << 0 << 7;
-    *set2 << 3 << 5 << 8 << 13 << 8 << 5;
-    *set3 << 5 << 6 << 7 << 3 << 4 << 5;
-    *set4 << 9 << 7 << 5 << 3 << 1 << 2;
+    *set0 << 6;
+    *set1 << 7;
+    *set2 << 5;
+    *set3 << 5;
+    *set4 << 2;
 
     auto barseries = new QHorizontalBarSeries;
     barseries->append(set0);
@@ -135,15 +135,8 @@ bool Widget::AddApp(const QString &appName)
     QString path2 = path1;
     QString path3 = path1;
 
-    QVBoxLayout *mainLayout = new QVBoxLayout(this);
-    QVBoxLayout *iconsLayout = new QVBoxLayout;
-    iconsLayout->setSpacing(10);  // 设置图标之间的间距
-
-    auto chart = new QChart;
-    chart->addSeries(barseries);
-
-    QStringList categories;
-    categories << "Jan" << "Feb" << "Mar" << "Apr" << "May" << "Jun";
+    QGridLayout *mainLayout = new QGridLayout(this);
+    mainLayout->setSpacing(10);  // 设置图标之间的间距
 
     QStringList iconSets = {path1, path2, path3, path3, path3, path3};
     for (int i = 0; i < iconSets.count(); i++){
@@ -151,35 +144,41 @@ bool Widget::AddApp(const QString &appName)
         IconLabel * iconLabel = new IconLabel(iconPixmap, i, this);
         connect(iconLabel, &IconLabel::clicked, this, &Widget::onIconClicked);
         iconLabels.append(iconLabel);
-        iconsLayout->addWidget(iconLabel);
+
+        auto bar = new QBarSet("xxx");
+        *bar << i;
+        auto chart = new QChart;
+        auto HBarseries = new QHorizontalBarSeries;
+        HBarseries->append(bar);
+        chart->addSeries(HBarseries);
+
+        auto chartView = new QChartView(chart);
+        chartView->setRenderHint(QPainter::Antialiasing);
+        chartView->setFixedHeight(100);
+
+        QStringList category;
+        category << "";
+        QBarCategoryAxis *axisL = new QBarCategoryAxis();
+        axisL->append(category);
+        chart->addAxis(axisL, Qt::AlignLeft);
+        HBarseries->attachAxis(axisL);
+
+        QValueAxis *axisB = new QValueAxis();
+        axisB->setRange(0,15);
+        chart->addAxis(axisB, Qt::AlignBottom);
+        HBarseries->attachAxis(axisB);
+
+        chart->legend()->setVisible(true);
+        chart->legend()->setAlignment(Qt::AlignLeft);
+
+        mainLayout->addWidget(iconLabel, i ,0);
+        mainLayout->addWidget(chartView, i ,1);
+
+
     }
 
-    auto chartView = new QChartView(chart);
-    chartView->setRenderHint(QPainter::Antialiasing);
 
-    QVBoxLayout *chartLayout = new QVBoxLayout;
-    chartLayout->addWidget(chartView);
-
-    QHBoxLayout *combinedLayout = new QHBoxLayout;
-    combinedLayout->addLayout(iconsLayout);
-    combinedLayout->addLayout(chartLayout);
-
-    mainLayout->addLayout(combinedLayout);
     setLayout(mainLayout);
-
-    auto axisX = new QBarCategoryAxis;
-    axisX->append(categories);
-    chart->addAxis(axisX, Qt::AlignLeft);
-    barseries->attachAxis(axisX);
-    axisX->setRange(QString("Jan"), QString("Jun"));
-
-    auto axisY = new QValueAxis;
-    chart->addAxis(axisY, Qt::AlignBottom);
-    barseries->attachAxis(axisY);
-    axisY->setRange(0, 20);
-
-    chart->legend()->setVisible(true);
-    chart->legend()->setAlignment(Qt::AlignLeft);
 
     return true;
 }

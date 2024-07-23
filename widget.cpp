@@ -46,9 +46,9 @@ Widget::Widget(QWidget *parent)
     InitAppDict();
     AddApp("app");
     GetAppUsageTime("qtcreator");
-    connect(ui->btn_test, &QPushButton::clicked, this, [=]() {
-        qDebug() << "clicked" << QTime::currentTime() << "\n";
-    });
+    // connect(ui->btn_test, &QPushButton::clicked, this, [=]() {
+    //     qDebug() << "clicked" << QTime::currentTime() << "\n";
+    // });
     SnapTimer->setInterval(Interval);
 
     LoadAppDict();
@@ -110,24 +110,17 @@ void Widget::InitAppDict()
 
 bool Widget::AddApp(const QString &appName)
 {
-    auto set0 = new QBarSet("Jane");
-    auto set1 = new QBarSet("John");
-    auto set2 = new QBarSet("Axel");
-    auto set3 = new QBarSet("Mary");
-    auto set4 = new QBarSet("Sam");
 
-    *set0 << 6;
-    *set1 << 7;
-    *set2 << 5;
-    *set3 << 5;
-    *set4 << 2;
+    QHBoxLayout *topLayout = new QHBoxLayout;
+    QSpacerItem *verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
-    auto barseries = new QHorizontalBarSeries;
-    barseries->append(set0);
-    barseries->append(set1);
-    barseries->append(set2);
-    barseries->append(set3);
-    barseries->append(set4);
+
+    QPushButton *button1 = new QPushButton("Button 1", this);
+    QPushButton *button2 = new QPushButton("Button 2", this);
+    QPushButton *button3 = new QPushButton("Button 3", this);
+    topLayout->addWidget(button1);
+    topLayout->addWidget(button2);
+    topLayout->addWidget(button3);
 
     QString appName1 = "Qt Creator";
     QString dir = QCoreApplication::applicationDirPath();
@@ -135,8 +128,8 @@ bool Widget::AddApp(const QString &appName)
     QString path2 = path1;
     QString path3 = path1;
 
-    QGridLayout *mainLayout = new QGridLayout(this);
-    mainLayout->setSpacing(10);  // 设置图标之间的间距
+    QGridLayout *bottomLayout = new QGridLayout(this);
+    bottomLayout->setSpacing(10);  // 设置图标之间的间距
 
     QStringList iconSets = {path1, path2, path3, path3, path3, path3};
     for (int i = 0; i < iconSets.count(); i++){
@@ -171,12 +164,22 @@ bool Widget::AddApp(const QString &appName)
         chart->legend()->setVisible(true);
         chart->legend()->setAlignment(Qt::AlignLeft);
 
-        mainLayout->addWidget(iconLabel, i ,0);
-        mainLayout->addWidget(chartView, i ,1);
+        bottomLayout->addWidget(iconLabel, i ,0);
+        bottomLayout->addWidget(chartView, i ,1);
 
 
     }
+    QWidget *scrollWidget = new QWidget;
+    scrollWidget->setLayout(bottomLayout);
+    QScrollArea *scrollArea = new QScrollArea;
+    scrollArea->setWidget(scrollWidget);
+    scrollArea->setWidgetResizable(true);
+    scrollArea->setFixedHeight(400);  // 设置滚动区域的固定高度
 
+    QVBoxLayout *mainLayout = new QVBoxLayout(this);
+    mainLayout->addLayout(topLayout);
+    mainLayout->addItem(verticalSpacer);
+    mainLayout->addWidget(scrollArea);
 
     setLayout(mainLayout);
 

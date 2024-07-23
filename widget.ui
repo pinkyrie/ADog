@@ -55,25 +55,6 @@ QPushButton:disabled {
 }
 </string>
   </property>
-  <widget class="QPushButton" name="btn_test">
-   <property name="geometry">
-    <rect>
-     <x>540</x>
-     <y>20</y>
-     <width>154</width>
-     <height>74</height>
-    </rect>
-   </property>
-   <property name="styleSheet">
-    <string notr="true"/>
-   </property>
-   <property name="text">
-    <string>PushButton</string>
-   </property>
-   <property name="icon">
-    <iconset theme="go-next"/>
-   </property>
-  </widget>
  </widget>
  <resources/>
  <connections/>

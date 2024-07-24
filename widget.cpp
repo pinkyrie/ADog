@@ -111,7 +111,7 @@ void Widget::InitAppDict()
 bool Widget::AddApp(const QString &appName)
 {
 
-    QHBoxLayout *topLayout = new QHBoxLayout;
+    QHBoxLayout *topLayout = ui->horizontalLayout;
     QSpacerItem *verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
 
@@ -128,7 +128,7 @@ bool Widget::AddApp(const QString &appName)
     QString path2 = path1;
     QString path3 = path1;
 
-    QGridLayout *bottomLayout = new QGridLayout(this);
+    QGridLayout *bottomLayout = ui->gridLayout;
     bottomLayout->setSpacing(10);  // 设置图标之间的间距
 
     QStringList iconSets = {path1, path2, path3, path3, path3, path3};
@@ -180,6 +180,7 @@ bool Widget::AddApp(const QString &appName)
     mainLayout->addLayout(topLayout);
     mainLayout->addItem(verticalSpacer);
     mainLayout->addWidget(scrollArea);
+    mainLayout->addLayout(ui->verticalLayout);
 
     setLayout(mainLayout);
 

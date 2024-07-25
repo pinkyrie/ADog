@@ -128,7 +128,7 @@ bool Widget::AddApp(const QString &appName)
     QString path2 = path1;
     QString path3 = path1;
 
-    QGridLayout *bottomLayout = ui->gridLayout;
+    QGridLayout *bottomLayout = new QGridLayout();
     bottomLayout->setSpacing(10);  // 设置图标之间的间距
 
     QStringList iconSets = {path1, path2, path3, path3, path3, path3};
@@ -174,12 +174,15 @@ bool Widget::AddApp(const QString &appName)
     QScrollArea *scrollArea = new QScrollArea;
     scrollArea->setWidget(scrollWidget);
     scrollArea->setWidgetResizable(true);
-    scrollArea->setFixedHeight(400);  // 设置滚动区域的固定高度
+    // scrollArea->setFixedHeight(450);  // 设置滚动区域的固定高度
+    // scrollArea->setFixedWidth(600);
+    ui->verticalLayout_2->addWidget(scrollArea);
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->addLayout(topLayout);
     mainLayout->addItem(verticalSpacer);
-    mainLayout->addWidget(scrollArea);
+    // mainLayout->addWidget(scrollArea);
+    mainLayout->addLayout(ui->verticalLayout_2);
     mainLayout->addLayout(ui->verticalLayout);
 
     setLayout(mainLayout);

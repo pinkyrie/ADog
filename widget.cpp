@@ -96,10 +96,10 @@ void Widget::InitAppDict()
     QString today = QDate::currentDate().toString("yyyy-MM-dd");
     qDebug() << "today is:" << today;
     QString date = "2024-07-16";
-    DBmanager.readByAppName("qtcreator", resByAppName);
-    for (auto it = resByAppName.begin(); it != resByAppName.end(); ++it) {
-        qDebug() << "Key:" << it.key() << "Value:" << it.value();
-    }
+    // DBmanager.readByAppName("qtcreator", resByAppName);
+    // for (auto it = resByAppName.begin(); it != resByAppName.end(); ++it) {
+    //     qDebug() << "Key:" << it.key() << "Value:" << it.value();
+    // }
     qDebug() << "date";
     DBmanager.readByDate(date, resByDate);
     for (auto it = resByDate.begin(); it != resByDate.end(); ++it) {
@@ -138,8 +138,13 @@ bool Widget::AddApp(const QString &appName)
         connect(iconLabel, &IconLabel::clicked, this, &Widget::onIconClicked);
         iconLabels.append(iconLabel);
 
-        auto bar = new QBarSet("xxx");
-        *bar << i;
+        auto it = resByDate.begin();
+        std::advance(it, i);
+        QString appName = it.key();
+        QString usageTime = it.value();
+        auto bar = new QBarSet(appName);
+        *bar << usageTime.toInt()/60;
+        qDebug() << appName << ":" << usageTime.toInt()/60;
         auto chart = new QChart;
         auto HBarseries = new QHorizontalBarSeries;
         HBarseries->append(bar);
@@ -186,6 +191,25 @@ bool Widget::AddApp(const QString &appName)
     mainLayout->addLayout(ui->verticalLayout);
 
     setLayout(mainLayout);
+
+    QTimeLine* timeLine = new QTimeLine(150, this); //伸缩动画//动画老祖，比QAnimation类好用多了
+    timeLine->setUpdateInterval(10); //default 40ms 25fps
+    connect(timeLine, &QTimeLine::frameChanged, this, &Widget::setFixedWidth);
+    // connect(timeLine, &QTimeLine::finished, [=]() {
+    //     QTimer::singleShot(10, [=]() { writeSetting(); }); //防止阻塞最后一帧
+    // });
+    connect(button1, &QPushButton::clicked, [=](bool checked) { //hhh
+        timeLine->stop(); //stop whenever click
+        if (checked) {
+            //setFixedWidth(Normal_W + Extra_W);
+            timeLine->setFrameRange(width(), 500 + 200);
+        } else {
+            //setFixedWidth(Normal_W);
+            timeLine->setFrameRange(width(), 500);
+            //QTimer::singleShot(100, [=]() { writeSetting(); });//I/O会阻塞动画，移至finished↑
+        }
+        timeLine->start();
+    });
 
     return true;
 }
@@ -235,15 +259,16 @@ void Widget::RecordTime(QDateTime StartTime)
             RecordingWindow = CurrentWindow;
         }
         else if (RecordingWindow == CurrentWindow) {
-            iter -> second += Interval/1000;
+            iter . value() += Interval/1000;
         }
         RecordingWindow = CurrentWindow;
     }
     else{
+        AppUsageDict.insert(CurrentWindow, 0);
         qDebug() << "Not found in the App recording list";
         return;
     }
-    qDebug() << iter->first << "time: " << iter->second;
+    qDebug() << iter.key() << "time: " << iter.value();
 }
 QString Widget:: GetWindowTitle(HWND hwnd) {
     DWORD pid;

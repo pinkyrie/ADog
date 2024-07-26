@@ -32,8 +32,7 @@ private:
     DBManager DBmanager;
     QVector<IconLabel *> iconLabels;
     std::vector<QString> AppList = {"qtcreator.exe"};
-    std::map<QString, int> AppUsageDict= {{"qtcreator.exe", 3600},
-                                   {"ADog.exe", 2400}};
+    QMap<QString, QString> AppUsageDict;
     QMap<QString, QString> resByAppName;
     QMap<QString, QString> resByDate;
     QString RecordingWindow = nullptr;

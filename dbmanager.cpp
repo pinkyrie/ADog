@@ -52,7 +52,7 @@ bool DBManager::updateItem(const QString &appName, const QString &date, const QS
 void DBManager::readByDate(const QString &date, QMap<QString, QString> &res)
 {
     QSqlQuery query;
-    query.prepare("SELECT app_name, usage_date "
+    query.prepare("SELECT app_name, usage_time "
                   "FROM AppUsage WHERE usage_date = :date");
     query.bindValue(":date", date);
     if (!query.exec()) {

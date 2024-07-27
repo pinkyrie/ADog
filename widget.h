@@ -32,10 +32,11 @@ private:
     DBManager DBmanager;
     QVector<IconLabel *> iconLabels;
     std::vector<QString> AppList = {"qtcreator.exe"};
-    QMap<QString, QString> AppUsageDict;
+    QMap<QString, int> AppUsageDict;
     QMap<QString, QString> resByAppName;
     QMap<QString, QString> resByDate;
     QString RecordingWindow = nullptr;
+    QString InitDate = nullptr;
     int Interval = 1000;
     void LoadAppDict();
     void InitAppDict();
@@ -52,5 +53,11 @@ private:
     void SavaUsageApps();
     void RecordTime(QDateTime StartTime);
     QString GetWindowTitle(HWND hwnd);
+
+    void SaveUsage();
+    void UpdateUsage();
+    bool CheckSaving();
+protected:
+    void closeEvent(QCloseEvent *event) override;
 };
 #endif // WIDGET_H

@@ -13,15 +13,15 @@ DBManager::DBManager() {
     }
 }
 
-bool DBManager::createItem(const QString &appName)
+bool DBManager::createItem(const QString &appName, const QString &date, int usageTime)
 {
 
     QSqlQuery query;
     query.prepare("INSERT INTO AppUsage (app_name, usage_date, usage_time) "
                   "VALUES (:app_name, :usage_date, :usage_time)");
     query.bindValue(":app_name", appName);
-    query.bindValue(":usage_date", "2024-7-17");
-    query.bindValue(":usage_time", "1500");
+    query.bindValue(":usage_date", date);
+    query.bindValue(":usage_time", usageTime);
     if(query.exec()){
         return true;
     }
@@ -31,22 +31,41 @@ bool DBManager::createItem(const QString &appName)
     }
 }
 
-bool DBManager::updateItem(const QString &appName, const QString &date, const QString &usageTime)
+bool DBManager::updateItem(int id, const QString &date, int usageTime)
 {
     QSqlQuery query;
-    query.prepare("UPDATE app_usage SET usage_date = :usage_date, usage_time = :usage_time "
-                  "WHERE app_name = :app_name");
-    query.bindValue(":usage_date", date);
-    query.bindValue(":usage_time", usageTime);
-    query.bindValue(":app_name", appName);
-    if(query.exec()){
-        return true;
-    }
-    else{
-        qDebug() << "create fails";
+
+    // Step 1: Retrieve the existing usage_time
+    query.prepare("SELECT usage_time FROM AppUsage WHERE id = :id");
+    query.bindValue(":id", id);
+    if (!query.exec()) {
+        qDebug() << "Query execution error: " << query.lastError().text();
+        qDebug() << "error time0";
         return false;
     }
 
+    if (!query.next()) {
+        qDebug() << "No record found with id:" << id;
+        return false;
+    }
+
+    int currentUsageTime = query.value(0).toInt();
+    qDebug() << "error time";
+    // Step 2: Update the usage_time by adding the passed usageTime
+    int updatedUsageTime = currentUsageTime + usageTime;
+
+    query.prepare("UPDATE AppUsage SET usage_date = :usage_date, usage_time = :usage_time "
+                  "WHERE id = :id");
+    query.bindValue(":usage_time", updatedUsageTime);
+    query.bindValue(":usage_date", date);
+    query.bindValue(":id", id);
+
+    if (query.exec()) {
+        return true;
+    } else {
+        qDebug() << "Update fails: " << query.lastError().text();
+        return false;
+    }
 }
 
 void DBManager::readByDate(const QString &date, QMap<QString, QString> &res)
@@ -84,6 +103,26 @@ void DBManager::readByAppName(const QString &appName, QMap<QString, QString> &re
         QString usage_date = query.value(0).toString();
         QString usage_time = query.value(1).toString();
         res.insert(usage_date, usage_time);
+    }
+
+}
+
+int DBManager::resIdPerAppDate(const QString &appName, const QString &date)
+{
+    QSqlQuery query;
+    query.prepare("SELECT id FROM AppUsage WHERE app_name = :appName AND usage_date = :date");
+    query.bindValue(":appName", appName);
+    query.bindValue(":date", date);
+
+    if (!query.exec()) {
+        qDebug() << "Query execution error: " << query.lastError().text();
+        return -1;
+    }
+
+    if (query.next()) {
+        return query.value("id").toInt();
+    } else {
+        return -1; // No matching record found
     }
 
 }

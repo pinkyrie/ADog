@@ -40,6 +40,7 @@ Widget::Widget(QWidget *parent)
     StartTime(QDateTime::currentDateTime()),
     DBmanager()
 {
+    InitDate = QDate::currentDate().toString("yyyy-MM-dd");
     ui->setupUi(this);
     setWindowTitle("ADog - Your App Usage Watch Dog");
 
@@ -259,7 +260,7 @@ void Widget::RecordTime(QDateTime StartTime)
             RecordingWindow = CurrentWindow;
         }
         else if (RecordingWindow == CurrentWindow) {
-            iter . value() += Interval/1000;
+            iter.value() += Interval/1000;
         }
         RecordingWindow = CurrentWindow;
     }
@@ -289,6 +290,52 @@ QString Widget:: GetWindowTitle(HWND hwnd) {
         CloseHandle(hProcess);
     }
     return processNameStr;
+}
+
+void Widget::SaveUsage()
+{
+
+
+
+}
+
+void Widget::UpdateUsage()
+{
+    for (auto it = AppUsageDict.begin(); it != AppUsageDict.end(); ++it) {
+        QString appName = it.key();
+        int usageTime = it.value();
+        int resId = DBmanager.resIdPerAppDate(appName, InitDate);
+        qDebug() << appName <<":" << resId;
+        if(resId != -1){
+            DBmanager.updateItem(resId, InitDate, usageTime);
+        }
+        else{
+            DBmanager.createItem(appName, InitDate, usageTime);
+        }
+
+    }
+}
+
+bool Widget::CheckSaving()
+{
+    QString RecordingDate = QDate::currentDate().toString("yyyy-MM-dd");
+    UpdateUsage();
+    if (RecordingDate != InitDate){
+        InitDate = RecordingDate;
+    }
+    return true;
+}
+
+void Widget::closeEvent(QCloseEvent *event)
+{
+    if (CheckSaving()) {
+        // If the save operation is successful, accept the close event
+        event->accept();
+    } else {
+        // If the save operation fails, ignore the close event and inform the user
+        qDebug() << "close fails to save data";
+        event->ignore();
+    }
 }
 
 // quote from Mrbean C huge thanks to mrbeanC :)

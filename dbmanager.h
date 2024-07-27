@@ -9,14 +9,13 @@ class DBManager
 {
 public:
     DBManager();
-    bool createItem(const QString& appName);
-    bool updateItem(const QString& appName,
-                    const QString& date,
-                    const QString& usageTime);
+    bool createItem(const QString& appName, const QString& date, int usageTime);
+    bool updateItem(int id, const QString& date, int usageTime);
     void readByDate(const QString& date,
                     QMap<QString, QString>& res);
     void readByAppName(const QString& appName,
                     QMap<QString, QString>& res);
+    int resIdPerAppDate(const QString& appName, const QString& date);
 
 };
 

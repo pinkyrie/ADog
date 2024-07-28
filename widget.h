@@ -27,6 +27,8 @@ private slots:
     void onIconClicked(int index);
 private:
     Ui::Widget *ui;
+    // ui widgets 提前放到类中作为成员 避免每次更新视图都会重复生成所有widget
+
     QTimer * SnapTimer;
     QDateTime StartTime;
     DBManager DBmanager;
@@ -41,7 +43,7 @@ private:
     void LoadAppDict();
     void InitAppDict();
     bool AddApp(const QString& appName);
-    bool UpdateAppUsage(const QString& appName);
+    void UpdateChart();
     bool DeleteApp(const QString& appName);
     bool GetAppUsageTime(const QString& appName);
     QString GetCurrentApp();

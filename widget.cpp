@@ -53,10 +53,11 @@ Widget::Widget(QWidget *parent)
     SnapTimer->setInterval(Interval);
 
     LoadAppDict();
-    SaveAppIcon();
+
 
     connect(SnapTimer, &QTimer::timeout, this, [=](){
         RecordTime(StartTime);
+        SaveAppIcon();
                                                });
     SnapTimer->start();
 
@@ -113,15 +114,13 @@ bool Widget::AddApp(const QString &appName)
 {
 
     QHBoxLayout *topLayout = ui->horizontalLayout;
-    QSpacerItem *verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
 
-    QPushButton *button1 = new QPushButton("Button 1", this);
-    QPushButton *button2 = new QPushButton("Button 2", this);
-    QPushButton *button3 = new QPushButton("Button 3", this);
-    topLayout->addWidget(button1);
-    topLayout->addWidget(button2);
-    topLayout->addWidget(button3);
+
+
+    topLayout->addWidget(ui->LeftBtn);
+    topLayout->addWidget(ui->lineEdit);
+    topLayout->addWidget(ui->RightBtn);
 
     QString appName1 = "Qt Creator";
     QString dir = QCoreApplication::applicationDirPath();
@@ -186,7 +185,7 @@ bool Widget::AddApp(const QString &appName)
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->addLayout(topLayout);
-    mainLayout->addItem(verticalSpacer);
+
     // mainLayout->addWidget(scrollArea);
     mainLayout->addLayout(ui->verticalLayout_2);
     mainLayout->addLayout(ui->verticalLayout);
@@ -199,7 +198,7 @@ bool Widget::AddApp(const QString &appName)
     // connect(timeLine, &QTimeLine::finished, [=]() {
     //     QTimer::singleShot(10, [=]() { writeSetting(); }); //防止阻塞最后一帧
     // });
-    connect(button1, &QPushButton::clicked, [=](bool checked) { //hhh
+    connect(ui->LeftBtn, &QPushButton::clicked, [=](bool checked) { //hhh
         timeLine->stop(); //stop whenever click
         if (checked) {
             //setFixedWidth(Normal_W + Extra_W);
@@ -215,9 +214,10 @@ bool Widget::AddApp(const QString &appName)
     return true;
 }
 
-bool Widget::UpdateAppUsage(const QString &appName)
+void Widget::UpdateChart()
 {
-    return true;
+    DBmanager.readByDate(InitDate, resByDate);
+
 }
 
 bool Widget::DeleteApp(const QString &appName)
@@ -447,8 +447,6 @@ bool Widget::SaveAppIcon()
         qDebug() << "无法提取图标";
     }
     return false;
-
-
 }
 
 Widget::~Widget()

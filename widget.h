@@ -39,6 +39,7 @@ private:
     QMap<QString, QString> resByDate;
     QString RecordingWindow = nullptr;
     QString InitDate = nullptr;
+    QDate ShowDate = QDate::currentDate();
     int Interval = 1000;
     void LoadAppDict();
     void InitAppDict();

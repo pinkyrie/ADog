@@ -59,6 +59,16 @@ Widget::Widget(QWidget *parent)
         RecordTime(StartTime);
         SaveAppIcon();
                                                });
+    connect(ui->LeftBtn, &QPushButton::clicked, this, [=](){
+        ShowDate = ShowDate.addDays(-1);
+        qDebug() << "date" << ShowDate;
+    });
+    connect(ui->RightBtn, &QPushButton::clicked, this, [=](){
+        if (ShowDate < QDate::currentDate()) {
+        qDebug() << "date" << ShowDate;
+        }
+    }
+);
     SnapTimer->start();
 
 }

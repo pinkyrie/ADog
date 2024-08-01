@@ -3,11 +3,11 @@
 
 #include "dbmanager.h"
 #include "iconlabel.h"
+#include "qgridlayout.h"
+#include "qscrollarea.h"
 #include <QWidget>
 #include <QTimer>
 #include <QDateTime>
-#include <QtCharts/QChartView>
-
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class Widget;
@@ -20,7 +20,6 @@ class Widget : public QWidget
 
 public:
     Widget(QWidget *parent = nullptr);
-    QtCharts::QChartView *chartView;
     ~Widget();
 
 private slots:
@@ -33,6 +32,11 @@ private:
     QDateTime StartTime;
     DBManager DBmanager;
     QVector<IconLabel *> iconLabels;
+    QWidget *scrollWidget = new QWidget;
+    QGridLayout *bottomLayout = new QGridLayout();
+    QScrollArea *scrollArea = new QScrollArea;
+    QVBoxLayout *mainLayout = new QVBoxLayout(this);
+
     std::vector<QString> AppList = {"qtcreator.exe"};
     QMap<QString, int> AppUsageDict;
     QMap<QString, QString> resByAppName;
@@ -60,6 +64,7 @@ private:
     void SaveUsage();
     void UpdateUsage();
     bool CheckSaving();
+    void ShowChart();
 protected:
     void closeEvent(QCloseEvent *event) override;
 };

@@ -43,9 +43,9 @@ Widget::Widget(QWidget *parent)
     InitDate = QDate::currentDate().toString("yyyy-MM-dd");
     ui->setupUi(this);
     setWindowTitle("ADog - Your App Usage Watch Dog");
-
-    InitAppDict();
-    AddApp("app");
+    bottomLayout->setSpacing(10);
+    //InitAppDict();
+    ShowChart();
     GetAppUsageTime("qtcreator");
     // connect(ui->btn_test, &QPushButton::clicked, this, [=]() {
     //     qDebug() << "clicked" << QTime::currentTime() << "\n";
@@ -61,11 +61,14 @@ Widget::Widget(QWidget *parent)
                                                });
     connect(ui->LeftBtn, &QPushButton::clicked, this, [=](){
         ShowDate = ShowDate.addDays(-1);
+        ShowChart();
         qDebug() << "date" << ShowDate;
     });
     connect(ui->RightBtn, &QPushButton::clicked, this, [=](){
         if (ShowDate < QDate::currentDate()) {
-        qDebug() << "date" << ShowDate;
+            ShowDate = ShowDate.addDays(+1);
+            ShowChart();
+            qDebug() << "date" << ShowDate;
         }
     }
 );
@@ -113,7 +116,7 @@ void Widget::InitAppDict()
     //     qDebug() << "Key:" << it.key() << "Value:" << it.value();
     // }
     qDebug() << "date";
-    DBmanager.readByDate(date, resByDate);
+    DBmanager.readByDate(today, resByDate);
     for (auto it = resByDate.begin(); it != resByDate.end(); ++it) {
         qDebug() << "Key:" << it.key() << "Value:" << it.value();
     }
@@ -123,10 +126,7 @@ void Widget::InitAppDict()
 bool Widget::AddApp(const QString &appName)
 {
 
-    QHBoxLayout *topLayout = ui->horizontalLayout;
-
-
-
+    QHBoxLayout *topLayout = ui->TopLayout;
 
     topLayout->addWidget(ui->LeftBtn);
     topLayout->addWidget(ui->lineEdit);
@@ -138,8 +138,7 @@ bool Widget::AddApp(const QString &appName)
     QString path2 = path1;
     QString path3 = path1;
 
-    QGridLayout *bottomLayout = new QGridLayout();
-    bottomLayout->setSpacing(10);  // 设置图标之间的间距
+     // 设置图标之间的间距
 
     QStringList iconSets = {path1, path2, path3, path3, path3, path3};
     for (int i = 0; i < iconSets.count(); i++){
@@ -191,14 +190,14 @@ bool Widget::AddApp(const QString &appName)
     scrollArea->setWidgetResizable(true);
     // scrollArea->setFixedHeight(450);  // 设置滚动区域的固定高度
     // scrollArea->setFixedWidth(600);
-    ui->verticalLayout_2->addWidget(scrollArea);
+    ui->BottomLayout->addWidget(scrollArea);
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
-    mainLayout->addLayout(topLayout);
+    mainLayout->addLayout(ui->TopLayout);
 
     // mainLayout->addWidget(scrollArea);
-    mainLayout->addLayout(ui->verticalLayout_2);
-    mainLayout->addLayout(ui->verticalLayout);
+    mainLayout->addLayout(ui->BottomLayout);
+    mainLayout->addLayout(ui->RightLayout);
 
     setLayout(mainLayout);
 
@@ -322,8 +321,8 @@ void Widget::UpdateUsage()
         else{
             DBmanager.createItem(appName, InitDate, usageTime);
         }
-
     }
+
 }
 
 bool Widget::CheckSaving()
@@ -334,6 +333,73 @@ bool Widget::CheckSaving()
         InitDate = RecordingDate;
     }
     return true;
+}
+
+void Widget::ShowChart()
+{
+    QString dir = QCoreApplication::applicationDirPath();
+    QString ShowDateStr = ShowDate.toString("yyyy-MM-dd");
+    DBmanager.readByDate(ShowDateStr, resByDate);
+
+    int index = 0;
+    if(resByDate.count() == 0){
+        return ;
+    }
+    for(auto it = resByDate.begin(); it != resByDate.end(); it++, index++){
+        auto appName = it.key();
+        auto usageTime = it.value();
+        auto bar = new QBarSet(appName);
+        //读取app的图标
+        QString path = dir +  "/png/" + appName + ".png";
+        QPixmap iconPixmap(path);
+        IconLabel * iconLabel = new IconLabel(iconPixmap, 0, this); //数字是为了开发过程标注哪一个被点击
+        connect(iconLabel, &IconLabel::clicked, this, &Widget::onIconClicked);
+        iconLabels.append(iconLabel);
+        //绘制柱状图
+        *bar << usageTime.toInt()/60;
+        auto chart = new QChart;
+        auto HBarseries = new QHorizontalBarSeries;
+        HBarseries->append(bar);
+        chart->addSeries(HBarseries);
+        auto chartView = new QChartView(chart);
+        chartView->setRenderHint(QPainter::Antialiasing);
+        chartView->setFixedHeight(100);
+
+        QStringList category;
+        category << "";
+        QBarCategoryAxis *axisL = new QBarCategoryAxis();
+        axisL->append(category);
+        chart->addAxis(axisL, Qt::AlignLeft);
+        HBarseries->attachAxis(axisL);
+
+        QValueAxis *axisB = new QValueAxis();
+        axisB->setRange(0,15);
+        chart->addAxis(axisB, Qt::AlignBottom);
+        HBarseries->attachAxis(axisB);
+
+        chart->legend()->setVisible(true);
+        chart->legend()->setAlignment(Qt::AlignLeft);
+
+        bottomLayout->addWidget(iconLabel, index ,0);
+        bottomLayout->addWidget(chartView, index ,1);
+    }
+
+    scrollWidget->setLayout(bottomLayout);
+
+    scrollArea->setWidget(scrollWidget);
+    scrollArea->setWidgetResizable(true);
+    // scrollArea->setFixedHeight(450);  // 设置滚动区域的固定高度
+    // scrollArea->setFixedWidth(600);
+    ui->BottomLayout->addWidget(scrollArea);
+
+    mainLayout->addLayout(ui->TopLayout);
+
+    // mainLayout->addWidget(scrollArea);
+    mainLayout->addLayout(ui->BottomLayout);
+    mainLayout->addLayout(ui->RightLayout);
+
+    setLayout(mainLayout);
+
 }
 
 void Widget::closeEvent(QCloseEvent *event)

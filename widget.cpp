@@ -131,6 +131,17 @@ bool Widget::AddApp(const QString &appName)
     topLayout->addWidget(ui->LeftBtn);
     topLayout->addWidget(ui->lineEdit);
     topLayout->addWidget(ui->RightBtn);
+    // QLayoutItem *child;
+    // while ((child = bottomLayout->columnCount()) {
+    //     qDebug() << " have children";
+    //     if (child->widget()) {
+    //         delete child->widget(); // Ensure proper deletion of widgets
+    //     }
+    //     delete child; // Delete the layout item
+    // }
+
+
+
 
     QString appName1 = "Qt Creator";
     QString dir = QCoreApplication::applicationDirPath();
@@ -139,11 +150,10 @@ bool Widget::AddApp(const QString &appName)
     QString path3 = path1;
 
      // 设置图标之间的间距
-
     QStringList iconSets = {path1, path2, path3, path3, path3, path3};
     for (int i = 0; i < iconSets.count(); i++){
         QPixmap iconPixmap(iconSets[i]);
-        IconLabel * iconLabel = new IconLabel(iconPixmap, i, this);
+        IconLabel * iconLabel = new IconLabel(iconPixmap, i, scrollWidget);
         connect(iconLabel, &IconLabel::clicked, this, &Widget::onIconClicked);
         iconLabels.append(iconLabel);
 
@@ -183,18 +193,14 @@ bool Widget::AddApp(const QString &appName)
 
 
     }
-    QWidget *scrollWidget = new QWidget;
     scrollWidget->setLayout(bottomLayout);
-    QScrollArea *scrollArea = new QScrollArea;
     scrollArea->setWidget(scrollWidget);
     scrollArea->setWidgetResizable(true);
     // scrollArea->setFixedHeight(450);  // 设置滚动区域的固定高度
     // scrollArea->setFixedWidth(600);
     ui->BottomLayout->addWidget(scrollArea);
 
-    QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->addLayout(ui->TopLayout);
-
     // mainLayout->addWidget(scrollArea);
     mainLayout->addLayout(ui->BottomLayout);
     mainLayout->addLayout(ui->RightLayout);
@@ -340,7 +346,16 @@ void Widget::ShowChart()
     QString dir = QCoreApplication::applicationDirPath();
     QString ShowDateStr = ShowDate.toString("yyyy-MM-dd");
     DBmanager.readByDate(ShowDateStr, resByDate);
-
+    qDebug() << "layout count is: " << bottomLayout->count();
+    QLayoutItem *child;
+    while ((child = bottomLayout->takeAt(0)) != nullptr) {
+        bottomLayout->removeItem(child);
+        if (child->widget()) {
+            delete child->widget(); // Ensure proper deletion of widgets
+        }
+        delete child; // Delete the layout item
+    }
+    qDebug() << "layout count after delete is: " << bottomLayout->count();
     int index = 0;
     if(resByDate.count() == 0){
         return ;
@@ -352,7 +367,7 @@ void Widget::ShowChart()
         //读取app的图标
         QString path = dir +  "/png/" + appName + ".png";
         QPixmap iconPixmap(path);
-        IconLabel * iconLabel = new IconLabel(iconPixmap, 0, this); //数字是为了开发过程标注哪一个被点击
+        IconLabel * iconLabel = new IconLabel(iconPixmap, 0, scrollWidget); //数字是为了开发过程标注哪一个被点击
         connect(iconLabel, &IconLabel::clicked, this, &Widget::onIconClicked);
         iconLabels.append(iconLabel);
         //绘制柱状图

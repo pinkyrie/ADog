@@ -33,7 +33,7 @@ private:
     DBManager DBmanager;
     QVector<IconLabel *> iconLabels;
     QWidget *scrollWidget = new QWidget;
-    QGridLayout *bottomLayout = new QGridLayout();
+    QGridLayout *bottomLayout = new QGridLayout(scrollWidget);
     QScrollArea *scrollArea = new QScrollArea;
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
 

@@ -9,20 +9,21 @@ class IconLabel : public QLabel
    Q_OBJECT
 public:
     IconLabel(const QPixmap &pixmap,
-              int index,
+              bool checked,
               QWidget *parent = nullptr);
 signals:
-    void clicked(int index);
+    void clicked(bool checked);
 protected:
     void mousePressEvent(QMouseEvent *event) override {
         if ( event ->button() == Qt::LeftButton) {
-            emit clicked(index);
+            emit clicked(checked);
+            checked = !checked;
         }
         QLabel::mousePressEvent(event);
     }
 
 private:
-    int index;
+    bool checked;
 };
 
 #endif // ICONLABEL_H

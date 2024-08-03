@@ -148,13 +148,32 @@ bool Widget::AddApp(const QString &appName)
     QString path1 = dir + "/png/" + appName1 + ".png";
     QString path2 = path1;
     QString path3 = path1;
-
+    QTimeLine* timeLine = new QTimeLine(150, this); //伸缩动画//动画老祖，比QAnimation类好用多了
      // 设置图标之间的间距
     QStringList iconSets = {path1, path2, path3, path3, path3, path3};
     for (int i = 0; i < iconSets.count(); i++){
         QPixmap iconPixmap(iconSets[i]);
         IconLabel * iconLabel = new IconLabel(iconPixmap, i, scrollWidget);
         connect(iconLabel, &IconLabel::clicked, this, &Widget::onIconClicked);
+
+        timeLine->setUpdateInterval(10); //default 40ms 25fps
+        connect(timeLine, &QTimeLine::frameChanged, this, &Widget::setFixedWidth);
+        // connect(timeLine, &QTimeLine::finished, [=]() {
+        //     QTimer::singleShot(10, [=]() { writeSetting(); }); //防止阻塞最后一帧
+        // });
+        connect(iconLabel, &IconLabel::clicked, [=](bool checked) { //hhh
+            timeLine->stop(); //stop whenever click
+            if (checked) {
+                //setFixedWidth(Normal_W + Extra_W);
+                timeLine->setFrameRange(width(), 500 + 200);
+            } else {
+                //setFixedWidth(Normal_W);
+                timeLine->setFrameRange(width(), 500);
+                //QTimer::singleShot(100, [=]() { writeSetting(); });//I/O会阻塞动画，移至finished↑
+            }
+            timeLine->start();
+        });
+
         iconLabels.append(iconLabel);
 
         auto it = resByDate.begin();
@@ -207,24 +226,8 @@ bool Widget::AddApp(const QString &appName)
 
     setLayout(mainLayout);
 
-    QTimeLine* timeLine = new QTimeLine(150, this); //伸缩动画//动画老祖，比QAnimation类好用多了
-    timeLine->setUpdateInterval(10); //default 40ms 25fps
-    connect(timeLine, &QTimeLine::frameChanged, this, &Widget::setFixedWidth);
-    // connect(timeLine, &QTimeLine::finished, [=]() {
-    //     QTimer::singleShot(10, [=]() { writeSetting(); }); //防止阻塞最后一帧
-    // });
-    connect(ui->LeftBtn, &QPushButton::clicked, [=](bool checked) { //hhh
-        timeLine->stop(); //stop whenever click
-        if (checked) {
-            //setFixedWidth(Normal_W + Extra_W);
-            timeLine->setFrameRange(width(), 500 + 200);
-        } else {
-            //setFixedWidth(Normal_W);
-            timeLine->setFrameRange(width(), 500);
-            //QTimer::singleShot(100, [=]() { writeSetting(); });//I/O会阻塞动画，移至finished↑
-        }
-        timeLine->start();
-    });
+
+
 
     return true;
 }
@@ -345,21 +348,27 @@ void Widget::ShowChart()
 {
     QString dir = QCoreApplication::applicationDirPath();
     QString ShowDateStr = ShowDate.toString("yyyy-MM-dd");
+    if(!resByDate.empty()){
+        resByDate.clear();
+    }
     DBmanager.readByDate(ShowDateStr, resByDate);
     qDebug() << "layout count is: " << bottomLayout->count();
     QLayoutItem *child;
     while ((child = bottomLayout->takeAt(0)) != nullptr) {
+        scrollWidget->hide();
         bottomLayout->removeItem(child);
         if (child->widget()) {
             delete child->widget(); // Ensure proper deletion of widgets
         }
         delete child; // Delete the layout item
     }
+    scrollWidget->show();
     qDebug() << "layout count after delete is: " << bottomLayout->count();
     int index = 0;
     if(resByDate.count() == 0){
         return ;
     }
+    QTimeLine* timeLine = new QTimeLine(150, this);
     for(auto it = resByDate.begin(); it != resByDate.end(); it++, index++){
         auto appName = it.key();
         auto usageTime = it.value();
@@ -368,7 +377,25 @@ void Widget::ShowChart()
         QString path = dir +  "/png/" + appName + ".png";
         QPixmap iconPixmap(path);
         IconLabel * iconLabel = new IconLabel(iconPixmap, 0, scrollWidget); //数字是为了开发过程标注哪一个被点击
-        connect(iconLabel, &IconLabel::clicked, this, &Widget::onIconClicked);
+        // connect(iconLabel, &IconLabel::clicked, this, &Widget::onIconClicked);
+        timeLine->setUpdateInterval(10); //default 40ms 25fps
+        connect(timeLine, &QTimeLine::frameChanged, this, &Widget::setFixedWidth);
+        // connect(timeLine, &QTimeLine::finished, [=]() {
+        //     QTimer::singleShot(10, [=]() { writeSetting(); }); //防止阻塞最后一帧
+        // });
+        connect(iconLabel, &IconLabel::clicked, [=](bool checked) { //hhh
+            timeLine->stop(); //stop whenever click
+            if (checked) {
+                //setFixedWidth(Normal_W + Extra_W);
+                timeLine->setFrameRange(width(), 500 + 200);
+            } else {
+                //setFixedWidth(Normal_W);
+                timeLine->setFrameRange(width(), 500);
+                //QTimer::singleShot(100, [=]() { writeSetting(); });//I/O会阻塞动画，移至finished↑
+            }
+            timeLine->start();
+        });
+
         iconLabels.append(iconLabel);
         //绘制柱状图
         *bar << usageTime.toInt()/60;

@@ -395,7 +395,7 @@ void Widget::ShowChart()
             }
             timeLine->start();
         });
-
+        // TODO: 手动绘制七天内的app使用情况横向为日期 纵向显示使用时间chart
         iconLabels.append(iconLabel);
         //绘制柱状图
         *bar << usageTime.toInt()/60;

@@ -384,13 +384,17 @@ void Widget::ShowChart()
         //     QTimer::singleShot(10, [=]() { writeSetting(); }); //防止阻塞最后一帧
         // });
         connect(iconLabel, &IconLabel::clicked, [=](bool checked) { //hhh
+            if(!resByAppName.empty()){
+                resByAppName.clear();
+            }
+            DBmanager.readByAppName(iconLabel->appName, resByAppName);
             timeLine->stop(); //stop whenever click
             if (checked) {
                 //setFixedWidth(Normal_W + Extra_W);
-                timeLine->setFrameRange(width(), 500 + 200);
+                timeLine->setFrameRange(width(), 540 + 200);
             } else {
                 //setFixedWidth(Normal_W);
-                timeLine->setFrameRange(width(), 500);
+                timeLine->setFrameRange(width(), 540);
                 //QTimer::singleShot(100, [=]() { writeSetting(); });//I/O会阻塞动画，移至finished↑
             }
             timeLine->start();

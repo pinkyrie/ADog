@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>708</width>
-    <height>444</height>
+    <width>540</width>
+    <height>450</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -64,22 +64,14 @@ QPushButton:disabled {
      <height>411</height>
     </rect>
    </property>
-   <layout class="QVBoxLayout" name="RightLayout">
-    <item>
-     <widget class="QPushButton" name="pushButton">
-      <property name="text">
-       <string>PushButton</string>
-      </property>
-     </widget>
-    </item>
-   </layout>
+   <layout class="QVBoxLayout" name="RightLayout"/>
   </widget>
   <widget class="QWidget" name="horizontalLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>30</x>
+     <x>20</x>
      <y>20</y>
-     <width>491</width>
+     <width>501</width>
      <height>80</height>
     </rect>
    </property>
@@ -132,13 +124,27 @@ QPushButton:disabled {
   <widget class="QWidget" name="verticalLayoutWidget_2">
    <property name="geometry">
     <rect>
-     <x>30</x>
+     <x>20</x>
      <y>119</y>
-     <width>491</width>
+     <width>501</width>
      <height>311</height>
     </rect>
    </property>
-   <layout class="QVBoxLayout" name="BottomLayout"/>
+   <layout class="QVBoxLayout" name="BottomLayout">
+    <item>
+     <spacer name="horizontalSpacer_4">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+   </layout>
   </widget>
  </widget>
  <resources/>

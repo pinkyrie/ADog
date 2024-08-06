@@ -1,4 +1,5 @@
 #include "dbmanager.h"
+#include "qdatetime.h"
 
 DBManager::DBManager() {
     QSqlDatabase database = QSqlDatabase::addDatabase("QSQLITE");
@@ -87,7 +88,7 @@ void DBManager::readByDate(const QString &date, QMap<QString, QString> &res)
     }
 }
 
-void DBManager::readByAppName(const QString &appName, QMap<QString, QString> &res)
+void DBManager::readByAppName(const QString &appName, QMap<QDate, QString> &res)
 {
     QSqlQuery query;
     query.prepare("SELECT usage_date, usage_time "
@@ -100,7 +101,7 @@ void DBManager::readByAppName(const QString &appName, QMap<QString, QString> &re
 
     // 读取查询结果并存储到res中
     while (query.next()) {
-        QString usage_date = query.value(0).toString();
+        QDate usage_date = query.value(0).toDate();;
         QString usage_time = query.value(1).toString();
         res.insert(usage_date, usage_time);
     }

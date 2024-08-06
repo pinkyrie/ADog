@@ -27,7 +27,7 @@ private slots:
 private:
     Ui::Widget *ui;
     // ui widgets 提前放到类中作为成员 避免每次更新视图都会重复生成所有widget
-
+    const QStringList dayNames = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
     QTimer * SnapTimer;
     QDateTime StartTime;
     DBManager DBmanager;
@@ -39,8 +39,9 @@ private:
 
     std::vector<QString> AppList = {"qtcreator.exe"};
     QMap<QString, int> AppUsageDict;
-    QMap<QString, QString> resByAppName;
+    QMap<QDate, QString> resByAppName;
     QMap<QString, QString> resByDate;
+    QMap<QDate, QString> resByAppNameFiltered;
     QString RecordingWindow = nullptr;
     QString InitDate = nullptr;
     QDate ShowDate = QDate::currentDate();
@@ -65,6 +66,8 @@ private:
     void UpdateUsage();
     bool CheckSaving();
     void ShowChart();
+    void getCurrentWeekStartEnd(QDate &startOfWeek, QDate &endOfWeek);
+    void filterUsageTimeForCurrentWeek(const QMap<QDate, QString> &usageTimeMap, QMap<QDate, QString> &filteredMap);
 protected:
     void closeEvent(QCloseEvent *event) override;
 };

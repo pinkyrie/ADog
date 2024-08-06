@@ -8,9 +8,10 @@ class IconLabel : public QLabel
 {
    Q_OBJECT
 public:
-    IconLabel(const QPixmap &pixmap,
-              bool checked,
-              QWidget *parent = nullptr);
+   IconLabel(const QPixmap &pixmap,
+             QString appName,
+             QWidget *parent = nullptr);
+    QString appName;
 signals:
     void clicked(bool checked);
 protected:
@@ -24,6 +25,7 @@ protected:
 
 private:
     bool checked;
+
 };
 
 #endif // ICONLABEL_H

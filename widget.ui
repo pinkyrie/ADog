@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>540</width>
+    <width>940</width>
     <height>450</height>
    </rect>
   </property>
@@ -60,11 +60,28 @@ QPushButton:disabled {
     <rect>
      <x>530</x>
      <y>20</y>
-     <width>181</width>
+     <width>401</width>
      <height>411</height>
     </rect>
    </property>
-   <layout class="QVBoxLayout" name="RightLayout"/>
+   <layout class="QVBoxLayout" name="RightLayout">
+    <property name="sizeConstraint">
+     <enum>QLayout::SetMaximumSize</enum>
+    </property>
+    <item>
+     <spacer name="horizontalSpacer_3">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>300</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+   </layout>
   </widget>
   <widget class="QWidget" name="horizontalLayoutWidget">
    <property name="geometry">

@@ -14,7 +14,7 @@ public:
     void readByDate(const QString& date,
                     QMap<QString, QString>& res);
     void readByAppName(const QString& appName,
-                    QMap<QString, QString>& res);
+                    QMap<QDate, QString>& res);
     int resIdPerAppDate(const QString& appName, const QString& date);
 
 };

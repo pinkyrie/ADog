@@ -126,109 +126,105 @@ void Widget::InitAppDict()
 bool Widget::AddApp(const QString &appName)
 {
 
-    QHBoxLayout *topLayout = ui->TopLayout;
+    // QHBoxLayout *topLayout = ui->TopLayout;
 
-    topLayout->addWidget(ui->LeftBtn);
-    topLayout->addWidget(ui->lineEdit);
-    topLayout->addWidget(ui->RightBtn);
-    // QLayoutItem *child;
-    // while ((child = bottomLayout->columnCount()) {
-    //     qDebug() << " have children";
-    //     if (child->widget()) {
-    //         delete child->widget(); // Ensure proper deletion of widgets
-    //     }
-    //     delete child; // Delete the layout item
+    // topLayout->addWidget(ui->LeftBtn);
+    // topLayout->addWidget(ui->lineEdit);
+    // topLayout->addWidget(ui->RightBtn);
+    // // QLayoutItem *child;
+    // // while ((child = bottomLayout->columnCount()) {
+    // //     qDebug() << " have children";
+    // //     if (child->widget()) {
+    // //         delete child->widget(); // Ensure proper deletion of widgets
+    // //     }
+    // //     delete child; // Delete the layout item
+    // // }
+
+
+
+
+    // QString appName1 = "Qt Creator";
+    // QString dir = QCoreApplication::applicationDirPath();
+    // QString path1 = dir + "/png/" + appName1 + ".png";
+    // QString path2 = path1;
+    // QString path3 = path1;
+    // QTimeLine* timeLine = new QTimeLine(150, this); //伸缩动画//动画老祖，比QAnimation类好用多了
+    //  // 设置图标之间的间距
+    // QStringList iconSets = {path1, path2, path3, path3, path3, path3};
+    // for (int i = 0; i < iconSets.count(); i++){
+    //     QPixmap iconPixmap(iconSets[i]);
+    //     IconLabel * iconLabel = new IconLabel(iconPixmap, i, scrollWidget);
+    //     connect(iconLabel, &IconLabel::clicked, this, &Widget::onIconClicked);
+
+    //     timeLine->setUpdateInterval(10); //default 40ms 25fps
+    //     connect(timeLine, &QTimeLine::frameChanged, this, &Widget::setFixedWidth);
+    //     // connect(timeLine, &QTimeLine::finished, [=]() {
+    //     //     QTimer::singleShot(10, [=]() { writeSetting(); }); //防止阻塞最后一帧
+    //     // });
+    //     connect(iconLabel, &IconLabel::clicked, [=](bool checked) { //hhh
+    //         timeLine->stop(); //stop whenever click
+    //         if (checked) {
+    //             //setFixedWidth(Normal_W + Extra_W);
+    //             timeLine->setFrameRange(width(), 500 + 200);
+    //         } else {
+    //             //setFixedWidth(Normal_W);
+    //             timeLine->setFrameRange(width(), 500);
+    //             //QTimer::singleShot(100, [=]() { writeSetting(); });//I/O会阻塞动画，移至finished↑
+    //         }
+    //         timeLine->start();
+    //     });
+
+    //     iconLabels.append(iconLabel);
+
+    //     auto it = resByDate.begin();
+    //     std::advance(it, i);
+    //     QString appName = it.key();
+    //     QString usageTime = it.value();
+    //     auto bar = new QBarSet(appName);
+    //     *bar << usageTime.toInt()/60;
+    //     qDebug() << appName << ":" << usageTime.toInt()/60;
+    //     auto chart = new QChart;
+    //     auto HBarseries = new QHorizontalBarSeries;
+    //     HBarseries->append(bar);
+    //     chart->addSeries(HBarseries);
+
+    //     auto chartView = new QChartView(chart);
+    //     chartView->setRenderHint(QPainter::Antialiasing);
+    //     chartView->setFixedHeight(100);
+
+    //     QStringList category;
+    //     category << "";
+    //     QBarCategoryAxis *axisL = new QBarCategoryAxis();
+    //     axisL->append(category);
+    //     chart->addAxis(axisL, Qt::AlignLeft);
+    //     HBarseries->attachAxis(axisL);
+
+    //     QValueAxis *axisB = new QValueAxis();
+    //     axisB->setRange(0,15);
+    //     chart->addAxis(axisB, Qt::AlignBottom);
+    //     HBarseries->attachAxis(axisB);
+
+    //     chart->legend()->setVisible(true);
+    //     chart->legend()->setAlignment(Qt::AlignLeft);
+
+    //     bottomLayout->addWidget(iconLabel, i ,0);
+    //     bottomLayout->addWidget(chartView, i ,1);
+
+
     // }
+    // scrollWidget->setLayout(bottomLayout);
+    // scrollArea->setWidget(scrollWidget);
+    // scrollArea->setWidgetResizable(true);
+    // // scrollArea->setFixedHeight(450);  // 设置滚动区域的固定高度
+    // // scrollArea->setFixedWidth(600);
+    // ui->BottomLayout->addWidget(scrollArea);
 
+    // mainLayout->addLayout(ui->TopLayout);
+    // // mainLayout->addWidget(scrollArea);
+    // mainLayout->addLayout(ui->BottomLayout);
+    // mainLayout->addLayout(ui->RightLayout);
 
-
-
-    QString appName1 = "Qt Creator";
-    QString dir = QCoreApplication::applicationDirPath();
-    QString path1 = dir + "/png/" + appName1 + ".png";
-    QString path2 = path1;
-    QString path3 = path1;
-    QTimeLine* timeLine = new QTimeLine(150, this); //伸缩动画//动画老祖，比QAnimation类好用多了
-     // 设置图标之间的间距
-    QStringList iconSets = {path1, path2, path3, path3, path3, path3};
-    for (int i = 0; i < iconSets.count(); i++){
-        QPixmap iconPixmap(iconSets[i]);
-        IconLabel * iconLabel = new IconLabel(iconPixmap, i, scrollWidget);
-        connect(iconLabel, &IconLabel::clicked, this, &Widget::onIconClicked);
-
-        timeLine->setUpdateInterval(10); //default 40ms 25fps
-        connect(timeLine, &QTimeLine::frameChanged, this, &Widget::setFixedWidth);
-        // connect(timeLine, &QTimeLine::finished, [=]() {
-        //     QTimer::singleShot(10, [=]() { writeSetting(); }); //防止阻塞最后一帧
-        // });
-        connect(iconLabel, &IconLabel::clicked, [=](bool checked) { //hhh
-            timeLine->stop(); //stop whenever click
-            if (checked) {
-                //setFixedWidth(Normal_W + Extra_W);
-                timeLine->setFrameRange(width(), 500 + 200);
-            } else {
-                //setFixedWidth(Normal_W);
-                timeLine->setFrameRange(width(), 500);
-                //QTimer::singleShot(100, [=]() { writeSetting(); });//I/O会阻塞动画，移至finished↑
-            }
-            timeLine->start();
-        });
-
-        iconLabels.append(iconLabel);
-
-        auto it = resByDate.begin();
-        std::advance(it, i);
-        QString appName = it.key();
-        QString usageTime = it.value();
-        auto bar = new QBarSet(appName);
-        *bar << usageTime.toInt()/60;
-        qDebug() << appName << ":" << usageTime.toInt()/60;
-        auto chart = new QChart;
-        auto HBarseries = new QHorizontalBarSeries;
-        HBarseries->append(bar);
-        chart->addSeries(HBarseries);
-
-        auto chartView = new QChartView(chart);
-        chartView->setRenderHint(QPainter::Antialiasing);
-        chartView->setFixedHeight(100);
-
-        QStringList category;
-        category << "";
-        QBarCategoryAxis *axisL = new QBarCategoryAxis();
-        axisL->append(category);
-        chart->addAxis(axisL, Qt::AlignLeft);
-        HBarseries->attachAxis(axisL);
-
-        QValueAxis *axisB = new QValueAxis();
-        axisB->setRange(0,15);
-        chart->addAxis(axisB, Qt::AlignBottom);
-        HBarseries->attachAxis(axisB);
-
-        chart->legend()->setVisible(true);
-        chart->legend()->setAlignment(Qt::AlignLeft);
-
-        bottomLayout->addWidget(iconLabel, i ,0);
-        bottomLayout->addWidget(chartView, i ,1);
-
-
-    }
-    scrollWidget->setLayout(bottomLayout);
-    scrollArea->setWidget(scrollWidget);
-    scrollArea->setWidgetResizable(true);
-    // scrollArea->setFixedHeight(450);  // 设置滚动区域的固定高度
-    // scrollArea->setFixedWidth(600);
-    ui->BottomLayout->addWidget(scrollArea);
-
-    mainLayout->addLayout(ui->TopLayout);
-    // mainLayout->addWidget(scrollArea);
-    mainLayout->addLayout(ui->BottomLayout);
-    mainLayout->addLayout(ui->RightLayout);
-
-    setLayout(mainLayout);
-
-
-
-
+    // setLayout(mainLayout);
     return true;
 }
 
@@ -376,7 +372,7 @@ void Widget::ShowChart()
         //读取app的图标
         QString path = dir +  "/png/" + appName + ".png";
         QPixmap iconPixmap(path);
-        IconLabel * iconLabel = new IconLabel(iconPixmap, 0, scrollWidget); //数字是为了开发过程标注哪一个被点击
+        IconLabel * iconLabel = new IconLabel(iconPixmap, appName, scrollWidget); //数字是为了开发过程标注哪一个被点击
         // connect(iconLabel, &IconLabel::clicked, this, &Widget::onIconClicked);
         timeLine->setUpdateInterval(10); //default 40ms 25fps
         connect(timeLine, &QTimeLine::frameChanged, this, &Widget::setFixedWidth);
@@ -387,16 +383,83 @@ void Widget::ShowChart()
             if(!resByAppName.empty()){
                 resByAppName.clear();
             }
+            if(!resByAppNameFiltered.empty()){
+                resByAppNameFiltered.clear();
+            }
+            QLayoutItem *child;
+            while ((child = ui->RightLayout->takeAt(1)) != nullptr) {
+                ui->RightLayout->removeItem(child);
+                if (child->widget()) {
+                    delete child->widget(); // Ensure proper deletion of widgets
+                }
+                delete child; // Delete the layout item
+            }
             DBmanager.readByAppName(iconLabel->appName, resByAppName);
+            qDebug() << "name" << iconLabel->appName;
+            for(auto it = resByAppName.begin(); it != resByAppName.end(); it++){
+                qDebug() << "res app name" << it.key() << it.value();
+            }
             timeLine->stop(); //stop whenever click
             if (checked) {
                 //setFixedWidth(Normal_W + Extra_W);
-                timeLine->setFrameRange(width(), 540 + 200);
+                timeLine->setFrameRange(width(), 540 + 400);
+
+
+                // Create the bar series
+                QBarSeries *series = new QBarSeries();
+
+                // Create a bar set and add data to it
+                QBarSet *set = new QBarSet("Usage Time (minutes)");
+
+                QStringList categories;
+                QDate startOfWeek, endOfWeek;
+                getCurrentWeekStartEnd(startOfWeek, endOfWeek);
+                qDebug() << "before filtering";
+                filterUsageTimeForCurrentWeek(resByAppName, resByAppNameFiltered);
+                for(auto it = resByAppNameFiltered.begin(); it != resByAppNameFiltered.end(); it++){
+                    qDebug() << "filter app name" << it.key() << it.value();
+                }
+                qDebug() << "start week end week" << startOfWeek << endOfWeek;
+                for (QDate date = startOfWeek; date <= endOfWeek; date = date.addDays(1)) {
+                    categories << dayNames[date.dayOfWeek() - 1];
+                    if (resByAppNameFiltered.contains(date)) {
+                        *set << resByAppNameFiltered.value(date).toInt()/60;
+                    }else{
+                        *set << 0;
+                    }
+                }
+                series->append(set);
+
+                // Create the chart
+                QChart *chart = new QChart();
+                chart->addSeries(series);
+                chart->setTitle("Weekly Usage Time");
+                chart->setAnimationOptions(QChart::SeriesAnimations);
+
+                // Create the axis
+                QBarCategoryAxis *axisX = new QBarCategoryAxis();
+                axisX->append(categories);
+                chart->addAxis(axisX, Qt::AlignBottom);
+                series->attachAxis(axisX);
+
+                QValueAxis *axisY = new QValueAxis();
+                axisY->setTitleText("Usage Time (minutes)");
+                chart->addAxis(axisY, Qt::AlignLeft);
+                series->attachAxis(axisY);
+
+                chart->legend()->setVisible(true);
+                chart->legend()->setAlignment(Qt::AlignBottom);
+
+                // Create the chart view
+                QChartView *chartView = new QChartView(chart);
+                chartView->setRenderHint(QPainter::Antialiasing);
+                ui->RightLayout->addWidget(chartView);
             } else {
                 //setFixedWidth(Normal_W);
                 timeLine->setFrameRange(width(), 540);
                 //QTimer::singleShot(100, [=]() { writeSetting(); });//I/O会阻塞动画，移至finished↑
             }
+
             timeLine->start();
         });
         // TODO: 手动绘制七天内的app使用情况横向为日期 纵向显示使用时间chart
@@ -571,6 +634,26 @@ bool Widget::SaveAppIcon()
     return false;
 }
 
+void Widget::getCurrentWeekStartEnd(QDate &startOfWeek, QDate &endOfWeek) {
+    QDate currentDate = QDate::currentDate();
+    startOfWeek = currentDate.addDays(-currentDate.dayOfWeek() + 1); // Assuming week starts on Monday
+    endOfWeek = startOfWeek.addDays(6); // Week ends on Sunday
+}
+
+void Widget::filterUsageTimeForCurrentWeek(const QMap<QDate, QString> &usageTimeMap, QMap<QDate, QString> &filteredMap) {
+    QDate startOfWeek, endOfWeek;
+    qDebug() << "filter";
+    getCurrentWeekStartEnd(startOfWeek, endOfWeek);
+    qDebug() << "count" << usageTimeMap.count();
+    for (auto it = usageTimeMap.begin(); it != usageTimeMap.end(); ++it) {
+        qDebug() << "filtering" << it.key() << it.value();
+        if (it.key() >= startOfWeek && it.key() <= endOfWeek) {
+            filteredMap.insert(it.key(), it.value());
+            qDebug() << "filter date" << it.key() << it.value();
+        }
+    }
+
+}
 Widget::~Widget()
 {
     delete ui;

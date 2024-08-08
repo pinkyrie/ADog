@@ -16,7 +16,7 @@ signals:
     void clicked(bool checked);
 protected:
     void mousePressEvent(QMouseEvent *event) override {
-        if ( event ->button() == Qt::LeftButton) {
+        if(event ->button() == Qt::LeftButton) {
             emit clicked(checked);
             checked = !checked;
         }
@@ -25,7 +25,6 @@ protected:
 
 private:
     bool checked;
-
 };
 
 #endif // ICONLABEL_H

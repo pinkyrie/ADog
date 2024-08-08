@@ -24,34 +24,38 @@ public:
 
 private slots:
     void onIconClicked(int index);
+
 private:
     Ui::Widget *ui;
     // ui widgets 提前放到类中作为成员 避免每次更新视图都会重复生成所有widget
     const QStringList dayNames = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
+    int Interval = 1000;
     QTimer * SnapTimer;
     QDateTime StartTime;
     DBManager DBmanager;
+
     QVector<IconLabel *> iconLabels;
     QWidget *scrollWidget = new QWidget;
     QGridLayout *bottomLayout = new QGridLayout(scrollWidget);
     QScrollArea *scrollArea = new QScrollArea;
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
 
-    std::vector<QString> AppList = {"qtcreator.exe"};
     QMap<QString, int> AppUsageDict;
     QMap<QDate, QString> resByAppName;
     QMap<QString, QString> resByDate;
     QMap<QDate, QString> resByAppNameFiltered;
+
     QString RecordingWindow = nullptr;
     QString InitDate = nullptr;
     QDate ShowDate = QDate::currentDate();
-    int Interval = 1000;
+
+
     void LoadAppDict();
     void InitAppDict();
-    bool AddApp(const QString& appName);
     void UpdateChart();
     bool DeleteApp(const QString& appName);
-    bool GetAppUsageTime(const QString& appName);
+
+
     QString GetCurrentApp();
     QString getFileDescription(const QString& path);
     QString getProcessExePath(HWND hwnd);
@@ -68,6 +72,7 @@ private:
     void ShowChart();
     void getCurrentWeekStartEnd(QDate &startOfWeek, QDate &endOfWeek);
     void filterUsageTimeForCurrentWeek(const QMap<QDate, QString> &usageTimeMap, QMap<QDate, QString> &filteredMap);
+
 protected:
     void closeEvent(QCloseEvent *event) override;
 };

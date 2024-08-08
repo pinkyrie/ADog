@@ -123,110 +123,6 @@ void Widget::InitAppDict()
 
 }
 
-bool Widget::AddApp(const QString &appName)
-{
-
-    // QHBoxLayout *topLayout = ui->TopLayout;
-
-    // topLayout->addWidget(ui->LeftBtn);
-    // topLayout->addWidget(ui->lineEdit);
-    // topLayout->addWidget(ui->RightBtn);
-    // // QLayoutItem *child;
-    // // while ((child = bottomLayout->columnCount()) {
-    // //     qDebug() << " have children";
-    // //     if (child->widget()) {
-    // //         delete child->widget(); // Ensure proper deletion of widgets
-    // //     }
-    // //     delete child; // Delete the layout item
-    // // }
-
-
-
-
-    // QString appName1 = "Qt Creator";
-    // QString dir = QCoreApplication::applicationDirPath();
-    // QString path1 = dir + "/png/" + appName1 + ".png";
-    // QString path2 = path1;
-    // QString path3 = path1;
-    // QTimeLine* timeLine = new QTimeLine(150, this); //伸缩动画//动画老祖，比QAnimation类好用多了
-    //  // 设置图标之间的间距
-    // QStringList iconSets = {path1, path2, path3, path3, path3, path3};
-    // for (int i = 0; i < iconSets.count(); i++){
-    //     QPixmap iconPixmap(iconSets[i]);
-    //     IconLabel * iconLabel = new IconLabel(iconPixmap, i, scrollWidget);
-    //     connect(iconLabel, &IconLabel::clicked, this, &Widget::onIconClicked);
-
-    //     timeLine->setUpdateInterval(10); //default 40ms 25fps
-    //     connect(timeLine, &QTimeLine::frameChanged, this, &Widget::setFixedWidth);
-    //     // connect(timeLine, &QTimeLine::finished, [=]() {
-    //     //     QTimer::singleShot(10, [=]() { writeSetting(); }); //防止阻塞最后一帧
-    //     // });
-    //     connect(iconLabel, &IconLabel::clicked, [=](bool checked) { //hhh
-    //         timeLine->stop(); //stop whenever click
-    //         if (checked) {
-    //             //setFixedWidth(Normal_W + Extra_W);
-    //             timeLine->setFrameRange(width(), 500 + 200);
-    //         } else {
-    //             //setFixedWidth(Normal_W);
-    //             timeLine->setFrameRange(width(), 500);
-    //             //QTimer::singleShot(100, [=]() { writeSetting(); });//I/O会阻塞动画，移至finished↑
-    //         }
-    //         timeLine->start();
-    //     });
-
-    //     iconLabels.append(iconLabel);
-
-    //     auto it = resByDate.begin();
-    //     std::advance(it, i);
-    //     QString appName = it.key();
-    //     QString usageTime = it.value();
-    //     auto bar = new QBarSet(appName);
-    //     *bar << usageTime.toInt()/60;
-    //     qDebug() << appName << ":" << usageTime.toInt()/60;
-    //     auto chart = new QChart;
-    //     auto HBarseries = new QHorizontalBarSeries;
-    //     HBarseries->append(bar);
-    //     chart->addSeries(HBarseries);
-
-    //     auto chartView = new QChartView(chart);
-    //     chartView->setRenderHint(QPainter::Antialiasing);
-    //     chartView->setFixedHeight(100);
-
-    //     QStringList category;
-    //     category << "";
-    //     QBarCategoryAxis *axisL = new QBarCategoryAxis();
-    //     axisL->append(category);
-    //     chart->addAxis(axisL, Qt::AlignLeft);
-    //     HBarseries->attachAxis(axisL);
-
-    //     QValueAxis *axisB = new QValueAxis();
-    //     axisB->setRange(0,15);
-    //     chart->addAxis(axisB, Qt::AlignBottom);
-    //     HBarseries->attachAxis(axisB);
-
-    //     chart->legend()->setVisible(true);
-    //     chart->legend()->setAlignment(Qt::AlignLeft);
-
-    //     bottomLayout->addWidget(iconLabel, i ,0);
-    //     bottomLayout->addWidget(chartView, i ,1);
-
-
-    // }
-    // scrollWidget->setLayout(bottomLayout);
-    // scrollArea->setWidget(scrollWidget);
-    // scrollArea->setWidgetResizable(true);
-    // // scrollArea->setFixedHeight(450);  // 设置滚动区域的固定高度
-    // // scrollArea->setFixedWidth(600);
-    // ui->BottomLayout->addWidget(scrollArea);
-
-    // mainLayout->addLayout(ui->TopLayout);
-    // // mainLayout->addWidget(scrollArea);
-    // mainLayout->addLayout(ui->BottomLayout);
-    // mainLayout->addLayout(ui->RightLayout);
-
-    // setLayout(mainLayout);
-    return true;
-}
 
 void Widget::UpdateChart()
 {
@@ -607,7 +503,7 @@ QPixmap Widget::GetApplicationIcon(const QString &exePath)
 
 bool Widget::SaveAppIcon()
 {
-    HWND hwnd = GetForegroundWindow();//TODO:hwnd做参数
+    HWND hwnd = GetForegroundWindow();// TODO:hwnd做参数
     QString exePath = getProcessExePath(hwnd);
     QPixmap iconPixmap = GetApplicationIcon(exePath);
     QString appName = getProcessDescription(hwnd);

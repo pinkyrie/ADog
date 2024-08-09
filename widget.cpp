@@ -42,6 +42,7 @@ Widget::Widget(QWidget *parent)
 {
     InitDate = QDate::currentDate().toString("yyyy-MM-dd");
     ui->setupUi(this);
+    ui->lineEdit->setText(InitDate);
     setWindowTitle("ADog - Your App Usage Watch Dog");
     bottomLayout->setSpacing(10);
     //InitAppDict();
@@ -51,21 +52,20 @@ Widget::Widget(QWidget *parent)
     // });
     SnapTimer->setInterval(Interval);
 
-    LoadAppDict();
-
-
     connect(SnapTimer, &QTimer::timeout, this, [=](){
         RecordTime(StartTime);
         SaveAppIcon();
                                                });
     connect(ui->LeftBtn, &QPushButton::clicked, this, [=](){
         ShowDate = ShowDate.addDays(-1);
+        ui->lineEdit->setText(ShowDate.toString("yyyy-MM-dd"));
         ShowChart();
         qDebug() << "date" << ShowDate;
     });
     connect(ui->RightBtn, &QPushButton::clicked, this, [=](){
         if (ShowDate < QDate::currentDate()) {
             ShowDate = ShowDate.addDays(+1);
+            ui->lineEdit->setText(ShowDate.toString("yyyy-MM-dd"));
             ShowChart();
             qDebug() << "date" << ShowDate;
         }
@@ -74,6 +74,8 @@ Widget::Widget(QWidget *parent)
     SnapTimer->start();
 
 }
+
+//deprecated: 不采用json的方式读取数据，sqlite更适合存储和条件查询带有日期等信息的数据
 void Widget::LoadAppDict()
 {
     // 需要把ini文件放到和可执行文件exe同级下
@@ -92,15 +94,11 @@ void Widget::LoadAppDict()
         return;
     }
     QJsonObject jsonObj = jsonDoc.object();
-    QMap<QString, int> map;
-
     // for (auto it = jsonObj.begin(); it != jsonObj.end(); ++it) {
     //     qDebug() << "Key:" << it.key() << "Value:" << it.value();
     //     qDebug() << it.value().toString();
     //     qDebug() << it.value().toString().toInt();
     // }
-
-
 }
 
 void Widget::InitAppDict()

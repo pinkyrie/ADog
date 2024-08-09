@@ -96,7 +96,7 @@ QPushButton:disabled {
     <item>
      <widget class="QPushButton" name="LeftBtn">
       <property name="text">
-       <string>Left</string>
+       <string>←</string>
       </property>
      </widget>
     </item>
@@ -114,7 +114,14 @@ QPushButton:disabled {
      </spacer>
     </item>
     <item>
-     <widget class="QLineEdit" name="lineEdit"/>
+     <widget class="QLineEdit" name="lineEdit">
+      <property name="alignment">
+       <set>Qt::AlignHCenter|Qt::AlignTop</set>
+      </property>
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
+     </widget>
     </item>
     <item>
      <spacer name="horizontalSpacer">
@@ -132,7 +139,7 @@ QPushButton:disabled {
     <item>
      <widget class="QPushButton" name="RightBtn">
       <property name="text">
-       <string>Right</string>
+       <string>→</string>
       </property>
      </widget>
     </item>

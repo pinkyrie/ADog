@@ -61,12 +61,10 @@ private:
     QString getProcessExePath(HWND hwnd);
     QString getProcessDescription(HWND hwnd);
     QPixmap GetApplicationIcon(const QString &exePath);
-    bool SaveAppIcon();
-    void SavaUsageApps();
-    void RecordTime(QDateTime StartTime);
     QString GetWindowTitle(HWND hwnd);
 
-    void SaveUsage();
+    bool SaveAppIcon();
+    void RecordTime(QDateTime StartTime);
     void UpdateUsage();
     bool CheckSaving();
     void ShowChart();

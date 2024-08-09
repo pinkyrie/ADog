@@ -46,7 +46,6 @@ Widget::Widget(QWidget *parent)
     bottomLayout->setSpacing(10);
     //InitAppDict();
     ShowChart();
-    GetAppUsageTime("qtcreator");
     // connect(ui->btn_test, &QPushButton::clicked, this, [=]() {
     //     qDebug() << "clicked" << QTime::currentTime() << "\n";
     // });
@@ -111,10 +110,6 @@ void Widget::InitAppDict()
     QString today = QDate::currentDate().toString("yyyy-MM-dd");
     qDebug() << "today is:" << today;
     QString date = "2024-07-16";
-    // DBmanager.readByAppName("qtcreator", resByAppName);
-    // for (auto it = resByAppName.begin(); it != resByAppName.end(); ++it) {
-    //     qDebug() << "Key:" << it.key() << "Value:" << it.value();
-    // }
     qDebug() << "date";
     DBmanager.readByDate(today, resByDate);
     for (auto it = resByDate.begin(); it != resByDate.end(); ++it) {
@@ -135,27 +130,7 @@ bool Widget::DeleteApp(const QString &appName)
     return true;
 }
 
-bool Widget::GetAppUsageTime(const QString &appName)
-{
-    QSqlQuery query("SELECT * FROM AppUsage");
-    while (query.next()) {
-        QString appName = query.value(1).toString();
-        qDebug() << appName;
-    }
-    return appName != nullptr;
-}
 
-QString Widget:: GetCurrentApp(){
-    HWND hwnd = GetForegroundWindow();
-    return GetWindowTitle(hwnd);
-
-
-}
-
-void Widget::SavaUsageApps()
-{
-
-}
 
 void Widget::RecordTime(QDateTime StartTime)
 {
@@ -202,12 +177,7 @@ QString Widget:: GetWindowTitle(HWND hwnd) {
     return processNameStr;
 }
 
-void Widget::SaveUsage()
-{
 
-
-
-}
 
 void Widget::UpdateUsage()
 {
@@ -266,7 +236,12 @@ void Widget::ShowChart()
         auto usageTime = it.value();
         auto bar = new QBarSet(appName);
         //读取app的图标
-        QString path = dir +  "/png/" + appName + ".png";
+        QString path = dir + "/png/" + appName + ".png";
+        // 检查文件是否存在
+        if (!QFile::exists(path)) {
+            // 如果文件不存在，使用默认图片路径
+            path = ":/images/default.png";
+        }
         QPixmap iconPixmap(path);
         IconLabel * iconLabel = new IconLabel(iconPixmap, appName, scrollWidget); //数字是为了开发过程标注哪一个被点击
         // connect(iconLabel, &IconLabel::clicked, this, &Widget::onIconClicked);

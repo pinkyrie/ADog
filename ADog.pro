@@ -11,12 +11,14 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    Utils/systemtrayutils.cpp \
     dbmanager.cpp \
     iconlabel.cpp \
     main.cpp \
     widget.cpp
 
 HEADERS += \
+    Utils/systemtrayutils.h \
     dbmanager.h \
     iconlabel.h \
     widget.h
@@ -40,3 +42,6 @@ msvc {
 
 RESOURCES += \
     res.qrc
+
+DISTFILES += \
+    Utils/test.txt

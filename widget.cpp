@@ -132,7 +132,7 @@ bool Widget::DeleteApp(const QString &appName)
 
 void Widget::RecordTime(QDateTime StartTime)
 {
-    QDateTime EndTime = StartTime;
+    QDateTime EndTime = StartTime; //TODO：last use time
 
     HWND hwnd = GetForegroundWindow();
     QString CurrentWindow = getProcessDescription(hwnd);

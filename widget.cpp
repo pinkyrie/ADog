@@ -40,6 +40,8 @@ Widget::Widget(QWidget *parent)
     StartTime(QDateTime::currentDateTime()),
     DBmanager()
 {
+
+
     InitDate = QDate::currentDate().toString("yyyy-MM-dd");
     ui->setupUi(this);
     ui->lineEdit->setText(InitDate);
@@ -72,7 +74,8 @@ Widget::Widget(QWidget *parent)
     }
 );
     SnapTimer->start();
-
+    sysTray = new SystemTrayUtils(this);
+    sysTray->show();
 }
 
 //deprecated: 不采用json的方式读取数据，sqlite更适合存储和条件查询带有日期等信息的数据

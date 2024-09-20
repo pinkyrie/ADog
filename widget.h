@@ -8,6 +8,8 @@
 #include <QWidget>
 #include <QTimer>
 #include <QDateTime>
+#include "Utils/systemtrayutils.h"
+
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class Widget;
@@ -32,6 +34,8 @@ private:
     int Interval = 1000;
     QTimer * SnapTimer;
     QDateTime StartTime;
+
+    SystemTrayUtils* sysTray;
     DBManager DBmanager;
 
     QVector<IconLabel *> iconLabels;

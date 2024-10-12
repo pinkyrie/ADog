@@ -40,24 +40,18 @@ Widget::Widget(QWidget *parent)
     StartTime(QDateTime::currentDateTime()),
     DBmanager()
 {
-
-
     InitDate = QDate::currentDate().toString("yyyy-MM-dd");
     ui->setupUi(this);
     ui->lineEdit->setText(InitDate);
     setWindowTitle("ADog - Your App Usage Watch Dog");
     bottomLayout->setSpacing(10);
-    //InitAppDict();
     ShowChart();
-    // connect(ui->btn_test, &QPushButton::clicked, this, [=]() {
-    //     qDebug() << "clicked" << QTime::currentTime() << "\n";
-    // });
     SnapTimer->setInterval(Interval);
 
     connect(SnapTimer, &QTimer::timeout, this, [=](){
         RecordTime(StartTime);
         SaveAppIcon();
-                                               });
+    });
     connect(ui->LeftBtn, &QPushButton::clicked, this, [=](){
         ShowDate = ShowDate.addDays(-1);
         ui->lineEdit->setText(ShowDate.toString("yyyy-MM-dd"));
@@ -97,11 +91,6 @@ void Widget::LoadAppDict()
         return;
     }
     QJsonObject jsonObj = jsonDoc.object();
-    // for (auto it = jsonObj.begin(); it != jsonObj.end(); ++it) {
-    //     qDebug() << "Key:" << it.key() << "Value:" << it.value();
-    //     qDebug() << it.value().toString();
-    //     qDebug() << it.value().toString().toInt();
-    // }
 }
 
 void Widget::InitAppDict()
@@ -215,17 +204,17 @@ void Widget::ShowChart()
         resByDate.clear();
     }
     DBmanager.readByDate(ShowDateStr, resByDate);
-    qDebug() << "layout count is: " << bottomLayout->count();
+    // 换页进行一波清空
     QLayoutItem *child;
     while ((child = bottomLayout->takeAt(0)) != nullptr) {
-        scrollWidget->hide();
+        // scrollWidget->hide();
         bottomLayout->removeItem(child);
         if (child->widget()) {
             delete child->widget(); // Ensure proper deletion of widgets
         }
         delete child; // Delete the layout item
     }
-    scrollWidget->show();
+    // scrollWidget->show();
     qDebug() << "layout count after delete is: " << bottomLayout->count();
     int index = 0;
     if(resByDate.count() == 0){
@@ -244,13 +233,10 @@ void Widget::ShowChart()
             path = ":/images/default.png";
         }
         QPixmap iconPixmap(path);
-        IconLabel * iconLabel = new IconLabel(iconPixmap, appName, scrollWidget); //数字是为了开发过程标注哪一个被点击
-        // connect(iconLabel, &IconLabel::clicked, this, &Widget::onIconClicked);
+        IconLabel * iconLabel = new IconLabel(iconPixmap, appName, scrollArea); //数字是为了开发过程标注哪一个被点击
+
         timeLine->setUpdateInterval(10); //default 40ms 25fps
         connect(timeLine, &QTimeLine::frameChanged, this, &Widget::setFixedWidth);
-        // connect(timeLine, &QTimeLine::finished, [=]() {
-        //     QTimer::singleShot(10, [=]() { writeSetting(); }); //防止阻塞最后一帧
-        // });
         connect(iconLabel, &IconLabel::clicked, [=](bool checked) { //hhh
             if(!resByAppName.empty()){
                 resByAppName.clear();
@@ -364,9 +350,11 @@ void Widget::ShowChart()
         bottomLayout->addWidget(iconLabel, index ,0);
         bottomLayout->addWidget(chartView, index ,1);
     }
+    QWidget *scrollWidget = new QWidget(this);
 
     scrollWidget->setLayout(bottomLayout);
 
+    // scrollArea->setWidget(scrollWidget);
     scrollArea->setWidget(scrollWidget);
     scrollArea->setWidgetResizable(true);
     // scrollArea->setFixedHeight(450);  // 设置滚动区域的固定高度

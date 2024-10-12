@@ -40,7 +40,8 @@ private:
 
     QVector<IconLabel *> iconLabels;
     QWidget *scrollWidget = new QWidget;
-    QGridLayout *bottomLayout = new QGridLayout(scrollWidget);
+    // QGridLayout *bottomLayout = new QGridLayout(scrollWidget);
+    QGridLayout *bottomLayout = new QGridLayout(this);
     QScrollArea *scrollArea = new QScrollArea;
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
 

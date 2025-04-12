@@ -5,7 +5,8 @@ IconLabel::IconLabel(const QPixmap &pixmap,
                     QWidget *parent):
     QLabel(parent), appName(appName), checked(true)
 {
-    setPixmap(pixmap);
-    setFixedSize(pixmap.size());
+    auto new_pixmap = pixmap.scaled(48,48, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    setPixmap(new_pixmap);
+    setFixedSize(new_pixmap.size());
     setCursor(Qt::PointingHandCursor);
 }

@@ -41,6 +41,7 @@ Widget::Widget(QWidget *parent)
     ui->lineEdit->setText(InitDate);
     setWindowTitle("ADog - Your App Usage Watch Dog");
     bottomLayout->setSpacing(10);
+    ui->RightLayout->parentWidget()->setVisible(false);
     ShowChart();
     SnapTimer->setInterval(Interval);
 
@@ -199,7 +200,7 @@ bool Widget::CheckSaving()
     if (RecordingDate != InitDate){
         InitDate = RecordingDate;
     }
-    return true;
+    return true;//todo
 }
 
 void Widget::ShowChart()
@@ -243,7 +244,9 @@ void Widget::ShowChart()
         IconLabel * iconLabel = new IconLabel(iconPixmap, appName, scrollArea); //数字是为了开发过程标注哪一个被点击
 
         timeLine->setUpdateInterval(10); //default 40ms 25fps
-        connect(timeLine, &QTimeLine::frameChanged, this, &Widget::setFixedWidth);
+        connect(timeLine, &QTimeLine::frameChanged, this, [=](const int f) {
+            resize(f,height()); // setFixedWidth会导致无法手动调整窗口
+        });
         connect(iconLabel, &IconLabel::clicked, [=](bool checked) { //hhh
             if(!resByAppName.empty()){
                 resByAppName.clear();
@@ -265,6 +268,7 @@ void Widget::ShowChart()
                 qDebug() << "res app name" << it.key() << it.value();
             }
             timeLine->stop(); //stop whenever click
+            ui->RightLayout->parentWidget()->setVisible(checked);
             if (checked) {
                 //setFixedWidth(Normal_W + Extra_W);
                 timeLine->setFrameRange(width(), 540 + 400);
@@ -357,22 +361,21 @@ void Widget::ShowChart()
         bottomLayout->addWidget(iconLabel, index ,0);
         bottomLayout->addWidget(chartView, index ,1);
     }
-    QWidget *scrollWidget = new QWidget(this);
-
     scrollWidget->setLayout(bottomLayout);
 
-    // scrollArea->setWidget(scrollWidget);
     scrollArea->setWidget(scrollWidget);
     scrollArea->setWidgetResizable(true);
     // scrollArea->setFixedHeight(450);  // 设置滚动区域的固定高度
     // scrollArea->setFixedWidth(600);
-    ui->BottomLayout->addWidget(scrollArea);
 
-    mainLayout->addLayout(ui->TopLayout);
-
-    // mainLayout->addWidget(scrollArea);
-    mainLayout->addLayout(ui->BottomLayout);
-    mainLayout->addLayout(ui->RightLayout);
+    // leftLayout->addLayout(ui->TopLayout);
+    // 1.在.ui中手动添加的layout会自动生成一个widget作为父亲
+    // 2.但是addLayout函数也会为其设置一个父亲（cmake-build-qt-msvc/adog_autogen/include_Debug/ui_widget.h），导致冲突
+    // 3.此时只能使用addWidget()，参数为layout->parentWidget()
+    leftLayout->addWidget(ui->TopLayout->parentWidget());
+    leftLayout->addWidget(scrollArea);
+    mainLayout ->addLayout(leftLayout); // 因为米有parent
+    mainLayout->addWidget(ui->RightLayout->parentWidget());
 
     setLayout(mainLayout);
 

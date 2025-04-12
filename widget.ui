@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>540</width>
-    <height>450</height>
+    <width>821</width>
+    <height>530</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -154,7 +154,7 @@ QPushButton:disabled {
      <height>311</height>
     </rect>
    </property>
-   <layout class="QVBoxLayout" name="BottomLayout">
+   <layout class="QVBoxLayout" name="DownLayout">
     <item>
      <spacer name="horizontalSpacer_4">
       <property name="orientation">

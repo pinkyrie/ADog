@@ -41,9 +41,10 @@ private:
     QVector<IconLabel *> iconLabels;
     QWidget *scrollWidget = new QWidget;
     // QGridLayout *bottomLayout = new QGridLayout(scrollWidget);
-    QGridLayout *bottomLayout = new QGridLayout(this);
+    QGridLayout *bottomLayout = new QGridLayout;
+    QVBoxLayout *leftLayout = new QVBoxLayout;
     QScrollArea *scrollArea = new QScrollArea;
-    QVBoxLayout *mainLayout = new QVBoxLayout(this);
+    QHBoxLayout *mainLayout = new QHBoxLayout;
 
     QMap<QString, int> AppUsageDict;
     QMap<QDate, QString> resByAppName;

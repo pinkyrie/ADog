@@ -32,6 +32,8 @@
 #include <QtCharts/QLegend>
 #include <QHorizontalBarSeries>
 
+#include "Utils/AppUtil.h"
+#include "Utils/Util.h"
 QT_CHARTS_USE_NAMESPACE
 
 Widget::Widget(QWidget *parent)
@@ -439,6 +441,8 @@ QString Widget::getProcessExePath(HWND hwnd)
 // quote from Mrbean C huge thanks to mrbeanC :)
 QString Widget::getProcessDescription(HWND hwnd)
 {
+    if (AppUtil::isAppFrameWindow(hwnd)) // UWP特殊处理
+        hwnd = AppUtil::getAppCoreWindow(hwnd); // AppCore 用于获取exe路径
     QString exePath = getProcessExePath(hwnd);
     return getFileDescription(exePath);
 }
@@ -469,7 +473,8 @@ bool Widget::SaveAppIcon()
 {
     HWND hwnd = GetForegroundWindow();// TODO:hwnd做参数
     QString exePath = getProcessExePath(hwnd);
-    QPixmap iconPixmap = GetApplicationIcon(exePath);
+    // QPixmap iconPixmap = GetApplicationIcon(exePath);
+    QPixmap iconPixmap = Util::getCachedIcon(exePath,hwnd).pixmap(64,64);
     QString appName = getProcessDescription(hwnd);
     QString appDir = QCoreApplication::applicationDirPath();
     QDir dir(appDir);

@@ -14,10 +14,15 @@ find_package(Qt5 COMPONENTS
         Sql
         Charts
         Winextras
+        Xml
         REQUIRED
 )
 
 add_executable(adog res.qrc main.cpp widget.cpp dbmanager.cpp iconlabel.cpp
+        Utils/Util.cpp
+        Utils/Util.h
+        Utils/AppUtil.cpp
+        Utils/AppUtil.h
         Utils/systemtrayutils.cpp)
 target_link_libraries(adog
         Qt5::Core
@@ -26,10 +31,12 @@ target_link_libraries(adog
         Qt5::Sql
         Qt5::Charts
         Qt5::WinExtras
+        Qt5::Xml
 )
 target_link_libraries(${PROJECT_NAME}
         psapi
         user32
+        Dwmapi
 )
 if (MSVC)
     target_compile_options(${PROJECT_NAME} PRIVATE "/utf-8")

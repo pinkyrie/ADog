@@ -1,8 +1,8 @@
 #include "widget.h"
 #include "iconlabel.h"
-#include "qbarcategoryaxis.h"
+#include "QtCharts/qbarcategoryaxis"
 #include "qboxlayout.h"
-#include "qvalueaxis.h"
+#include "QtCharts/qvalueaxis.h"
 #include "ui_widget.h"
 #include <QPushButton>
 #include <QDebug>
@@ -12,25 +12,19 @@
 #include <Psapi.h>
 #include <libloaderapi.h>
 #include <QFile>
-#include <QFileInfo>
-#include <QDir>
 #include <system_error>
 #include <shobjidl.h>
-#include <propkey.h>
 #include <comdef.h>
 #include <atlbase.h>
-#include <QtWinExtras>
+#include <QtWinExtras/QtWinExtras>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QJsonArray>
-#include <QSqlDatabase>
-#include <QSqlError>
-#include <QSqlQuery>
 #include <QtCharts/QChartView>
 #include <QtCharts/QBarSeries>
 #include <QtCharts/QBarSet>
 #include <QtCharts/QLegend>
-#include <QHorizontalBarSeries>
+#include <QtCharts/QHorizontalBarSeries>
+#include <propkey.h>
 
 #include "Utils/AppUtil.h"
 #include "Utils/Util.h"
@@ -72,6 +66,16 @@ Widget::Widget(QWidget *parent)
     SnapTimer->start();
     sysTray = new SystemTrayUtils(this);
     sysTray->show();
+    // 隐藏窗口
+    this->hide();
+
+    // 连接系统托盘图标的双击事件到显示窗口的槽函数
+    connect(sysTray, &QSystemTrayIcon::activated, this, [=](QSystemTrayIcon::ActivationReason reason) {
+        if (reason == QSystemTrayIcon::DoubleClick) {
+            this->show();
+            this->activateWindow();
+        }
+    });
 }
 
 //deprecated: 不采用json的方式读取数据，sqlite更适合存储和条件查询带有日期等信息的数据
@@ -154,9 +158,9 @@ QString Widget:: GetWindowTitle(HWND hwnd) {
 
     // Get a handle to the process.
 
-    HANDLE hProcess = OpenProcess( PROCESS_QUERY_INFORMATION |
-                                      PROCESS_VM_READ,
-                                  FALSE, pid);
+    Qt::HANDLE hProcess = OpenProcess( PROCESS_QUERY_INFORMATION |
+                                       PROCESS_VM_READ,
+                                       FALSE, pid);
     QString processNameStr;
     if (hProcess != nullptr) {
         TCHAR processName[MAX_PATH] = TEXT("<unknown>");
@@ -200,6 +204,7 @@ bool Widget::CheckSaving()
 
 void Widget::ShowChart()
 {
+    qDebug() << "show chart";
     QString dir = QCoreApplication::applicationDirPath();
     QString ShowDateStr = ShowDate.toString("yyyy-MM-dd");
     if(!resByDate.empty()){

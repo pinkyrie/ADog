@@ -12,6 +12,7 @@ DBManager::DBManager() {
     database.setDatabaseName(dbPath);
     if (!database.open())
     {
+        qDebug() << "db path: " << dbPath;
         qDebug() << "Error: connection with database failed";
     }
     else
